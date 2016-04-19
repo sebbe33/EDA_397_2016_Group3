@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">EDA397_2016_GROUP3</string>
+    <string name="timer_format" formatted="false">%02d:%02d:%02d.%03d</string>
+    <string name="timer_format_hint">HH:MM:SS.mmm</string>
 </resources>

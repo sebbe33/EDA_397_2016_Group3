@@ -1,25 +1,30 @@
 package chalmers.eda397_2016_group3;
 
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.util.Locale;
+
 public class MainActivity extends ActionBarActivity {
-    private int startTime = 0;
-    private boolean timerIsStarted = false;
-    private long timeWhenStopped = 0;
-    private boolean timerIsPaused = false;
-    private Intent intent;
+
+    private int totalTimeSeconds;
     EditText edtSetTime;
 
     /**
@@ -29,48 +34,89 @@ public class MainActivity extends ActionBarActivity {
     private GoogleApiClient client;
 
 
+    private NotificationManager mNotifyMgr;
+
+    private MyTimer timer = new MyTimer(new Handler());
+
+    private String formatTime(String format, long millisLeft) {
+        long hours = millisLeft / 1000 / 60 / 60,
+                minutes = (millisLeft / 1000 / 60) % 60,
+                seconds = (millisLeft / 1000) % 60,
+                millis = millisLeft % 1000;
+
+        return String.format(Locale.US, format, hours, minutes, seconds, millis);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final Chronometer chronometer = (Chronometer) findViewById(R.id.chronometer);
+        // Notification
+        mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        final NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle("Timer");
+
+        // Timer stuff
+        final String timerFormat = getString(R.string.timer_format);
+        final TextView tv_timer = (TextView) findViewById(R.id.tv_timer);
+        final MyTimer timer = new MyTimer(new Handler());
+        timer.setCallback(new MyTimer.Callback() {
+            @Override
+            public void onTick(long totalElapsedMillis) {
+                long millisLeft = Math.max(0, totalTimeSeconds * 1000 - totalElapsedMillis);
+                String time = formatTime(timerFormat, millisLeft);
+                tv_timer.setText(time);
+                notificationBuilder.setContentText(time);
+                mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
+                // If the current time over the time user set.
+                if (millisLeft == 0) {
+                    timer.stop();
+                    // Notify the user
+                    notificationBuilder.setContentText("Time is up!");
+                    notificationBuilder.setSound(Uri.parse("android.resource://"
+                            + getPackageName() + "/" + R.raw.cat));
+                    mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
+                    notificationBuilder.setSound(null);
+                    showDialog();
+
+                }
+            }
+        });
         final Button btnStart = (Button) findViewById(R.id.btnStart);
         Button btnRest = (Button) findViewById(R.id.btnReset);
-         edtSetTime = (EditText) findViewById(R.id.edt_settime);
+               edtSetTime = (EditText) findViewById(R.id.edt_settime);
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!timerIsStarted && !timerIsPaused) {
-                    System.out.println("--Start Timer---");
+                if (!timer.isRunning()) {
+                    System.out.println("--Start MyTimer---");
                     String ss = edtSetTime.getText().toString();
                     if (!(ss.equals("") && ss != null)) {
-                        startTime = Integer.parseInt(edtSetTime.getText()
+                        totalTimeSeconds = Integer.parseInt(edtSetTime.getText()
                                 .toString());
                     }
-                    // Set start time
-                    chronometer.setBase(SystemClock.elapsedRealtime());
                     // Start counting
-                    chronometer.start();
+                    timer.start(1);
                     btnStart.setText("Pause");
-                    timerIsStarted = true;
-
-                } else if (timerIsStarted && !timerIsPaused) {
+                    String time = formatTime(timerFormat, totalTimeSeconds*1000);
+                    tv_timer.setText(time);
+                    // Notification
+                    notificationBuilder.setContentText(time);
+                    mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
+                } else if (!timer.isPaused()) {
                     //pause the timer
-                    timeWhenStopped = chronometer.getBase() - SystemClock.elapsedRealtime();
-                    timerIsPaused = true;
-                    timerIsStarted = false;
-                    chronometer.stop();
+                    timer.pause();
                     btnStart.setText("Resume");
-
+                    // Notification
+                    notificationBuilder.setContentText("Paused");
+                    mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
                 } else {
                     //resume the timer
-                    chronometer.setBase(SystemClock.elapsedRealtime() + timeWhenStopped);
-                    chronometer.start();
-                    timerIsPaused = false;
-                    timerIsStarted = true;
+                    timer.resume();
                     btnStart.setText("Pause");
-
                 }
             }
         });
@@ -80,25 +126,11 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 //Reset the timer
-                chronometer.setBase(SystemClock.elapsedRealtime());
-                timeWhenStopped = 0;
+                if(timer.isRunning())
+                    timer.stop();
+                tv_timer.setText(null);
                 btnStart.setText("Start");
-                timerIsPaused = false;
-                timerIsStarted = false;
-
-            }
-        });
-        chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-            @Override
-            public void onChronometerTick(Chronometer chronometer) {
-                // If the current time over the time user set.
-                if (SystemClock.elapsedRealtime()
-                        - chronometer.getBase() > startTime * 1000) {
-                    chronometer.stop();
-                    // Notify the user
-                    showDialog();
-
-                }
+                mNotifyMgr.cancel(R.integer.notification_timer);
             }
         });
 
