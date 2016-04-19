@@ -1,8 +1,6 @@
 package chalmers.eda397_2016_group3;
 
 import android.app.AlertDialog;
-import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +20,7 @@ public class MainActivity extends ActionBarActivity {
     private long timeWhenStopped = 0;
     private boolean timerIsPaused = false;
     private Intent intent;
+    EditText edtSetTime;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -35,13 +34,10 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DevicePolicyManager policyManager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
-        final ComponentName componentName = new ComponentName(this, MyAdminReceiver.class);
-        final boolean isAdminActive = policyManager.isAdminActive(componentName);
         final Chronometer chronometer = (Chronometer) findViewById(R.id.chronometer);
         final Button btnStart = (Button) findViewById(R.id.btnStart);
         Button btnRest = (Button) findViewById(R.id.btnReset);
-        final EditText edtSetTime = (EditText) findViewById(R.id.edt_settime);
+         edtSetTime = (EditText) findViewById(R.id.edt_settime);
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,24 +98,9 @@ public class MainActivity extends ActionBarActivity {
                     // Notify the user
                     showDialog();
 
-                    if(!isAdminActive){
-                        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-                        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
-                        startActivity(intent);
-                    }
                 }
             }
         });
-
-
-
-
-
-        intent = new Intent(this, MyService.class);
-        startService(intent);
-
-
-
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -132,6 +113,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
 
     }
 

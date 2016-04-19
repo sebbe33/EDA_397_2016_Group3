@@ -23,17 +23,6 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <service android:name=".MyService"/>
-        <activity android:name=".AlertActivity"
-            android:theme="@android:style/Theme.Holo.Wallpaper.NoTitleBar"></activity>
-
-        <receiver android:name=".MyAdminReceiver" >
-            <meta-data android:name="android.app.device_admin"
-                android:resource="@xml/my_admin_receiver"/>
-            <intent-filter >
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED"/>
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>
