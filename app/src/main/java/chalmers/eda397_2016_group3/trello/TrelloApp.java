@@ -1,4 +1,4 @@
-package chalmers.eda397_2016_group3.slack;
+package chalmers.eda397_2016_group3.trello;
 
 /**
  * Created by Sebastian Blomberg on 2016-04-20.

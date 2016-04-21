@@ -1,4 +1,4 @@
-package chalmers.eda397_2016_group3.slack;
+package chalmers.eda397_2016_group3.trello;
 
 import android.util.Log;
 import android.webkit.WebView;

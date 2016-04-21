@@ -1,7 +1,8 @@
-package chalmers.eda397_2016_group3.slack;
+package chalmers.eda397_2016_group3.trello;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import org.trello4j.Trello;
 import org.trello4j.TrelloImpl;
@@ -24,13 +25,16 @@ public class TrelloAppFactory {
         String name = context.getResources().getString(R.string.app_name);
         String apiKey = context.getResources().getString(R.string.TRELLO_API_KEY);
         String authExp = context.getResources().getString(R.string.TRELLO_AUTHENTICATION_EXPIRATION);
-        String authToken = bundle.getString(BUNDLE_TOKEN_KEY);
-
-        if(authToken == null) {
-            return new TrelloAppImpl(name, apiKey, authExp);
+        String authToken = null;
+        if(bundle != null) {
+            authToken = bundle.getString(BUNDLE_TOKEN_KEY);
         }
 
-        return new TrelloAppImpl(name, apiKey, authExp, authToken);
+        if(authToken == null) {
+            return new TrelloAppImpl(apiKey, name, authExp);
+        }
+
+        return new TrelloAppImpl(apiKey, name, authExp, authToken);
     }
 
     /**
@@ -39,6 +43,8 @@ public class TrelloAppFactory {
      * @return trello API interface
      */
     public static Trello getTrelloAPIInterface(TrelloApp trelloApp) {
+        Log.d("debug", "Creating new trello API interface (APIKey: " + trelloApp.getApplicationID()
+                + ", Token: " + trelloApp.getAuthenticationToken());
         return new TrelloImpl(trelloApp.getApplicationID(), trelloApp.getAuthenticationToken());
     }
 }
