@@ -20,17 +20,46 @@
             android:layout_margin="10dip"
             android:orientation="horizontal" >
             <TextView
-                android:layout_width="fill_parent"
+                android:layout_width="70dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="4"
                 android:gravity="center"
                 android:text="Set Time" />
-            <EditText
-                android:id="@+id/edt_settime"
-                android:layout_width="fill_parent"
+
+            <Spinner
+                android:layout_width="76dp"
+                android:layout_height="49dp"
+                android:id="@+id/hourSpinner"
+                android:spinnerMode="dropdown"
+                android:entries="@array/Hours"/>
+
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:inputType="number" />
+                android:gravity="center"
+                android:text=":"
+                android:id="@+id/textView1" />
+
+            <Spinner
+                android:layout_width="79dp"
+                android:layout_height="match_parent"
+                android:id="@+id/MinuteSpinner"
+                android:spinnerMode="dropdown"
+                android:entries="@array/Minutes"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text=":"
+                android:id="@+id/textView" />
+
+            <Spinner
+                android:layout_width="72dp"
+                android:layout_height="match_parent"
+                android:id="@+id/SecondSpinner"
+                android:spinnerMode="dropdown"
+                android:entries="@array/Seconds" />
+
         </LinearLayout>
 
 

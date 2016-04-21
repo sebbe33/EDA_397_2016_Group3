@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.appindexing.AppIndex;
@@ -51,6 +52,11 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        final Button btnStart = (Button) findViewById(R.id.btnStart);
+        Button btnRest = (Button) findViewById(R.id.btnReset);
+        final Spinner SpinnerHour = (Spinner) findViewById(R.id.hourSpinner);
+        final Spinner SpinnerMinute = (Spinner) findViewById(R.id.MinuteSpinner);
+        final Spinner SpinnerSecond = (Spinner) findViewById(R.id.SecondSpinner);
 
         // Notification
         mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -80,24 +86,26 @@ public class MainActivity extends ActionBarActivity {
                             + getPackageName() + "/" + R.raw.cat));
                     mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
                     notificationBuilder.setSound(null);
+                    btnStart.setText("Start");
                     showDialog();
 
                 }
             }
         });
-        final Button btnStart = (Button) findViewById(R.id.btnStart);
-        Button btnRest = (Button) findViewById(R.id.btnReset);
-               edtSetTime = (EditText) findViewById(R.id.edt_settime);
+
+             //  edtSetTime = (EditText) findViewById(R.id.edt_settime);
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!timer.isRunning()) {
                     System.out.println("--Start MyTimer---");
-                    String ss = edtSetTime.getText().toString();
-                    if (!(ss.equals("") && ss != null)) {
-                        totalTimeSeconds = Integer.parseInt(edtSetTime.getText()
-                                .toString());
-                    }
+                   // String ss = edtSetTime.getText().toString();
+                    String ss = toSeconds(SpinnerHour.getSelectedItem().toString(),
+                            SpinnerMinute.getSelectedItem().toString(),
+                            SpinnerSecond.getSelectedItem().toString());
+
+                        totalTimeSeconds = Integer.parseInt(ss);
+
                     // Start counting
                     timer.start(1);
                     btnStart.setText("Pause");
@@ -161,6 +169,15 @@ public class MainActivity extends ActionBarActivity {
                 });
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    public String toSeconds(String hour,String minute,String second){
+
+        int hours = Integer.valueOf(hour);
+        int minutes = Integer.valueOf(minute);
+        int seconds = Integer.valueOf(second);
+
+        return String.valueOf(hours*3600+minutes*60+seconds);
     }
 
 
