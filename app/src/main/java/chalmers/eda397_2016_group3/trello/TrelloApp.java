@@ -10,4 +10,5 @@ public interface TrelloApp {
     String getAuthenticationExpiration();
     boolean isAuthenticated();
     String getAuthenticationToken();
+    String getSelectedBoardID();
 }

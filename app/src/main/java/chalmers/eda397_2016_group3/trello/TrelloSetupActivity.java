@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -17,21 +18,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import chalmers.eda397_2016_group3.R;
+import chalmers.eda397_2016_group3.utils.AdapterTuple;
 
-public class TrelloSetupActivity extends ActionBarActivity {
+public class TrelloSetupActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
     private TrelloApp trelloApp = null;
     private Trello trelloAPI = null;
-    private Bundle activeBundle = null;
+    private List<AdapterTuple<String,String>> spinnerOptions = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trello_setup);
 
-        trelloApp = TrelloAppFactory.createTrelloApp(this, savedInstanceState);
-        activeBundle = savedInstanceState;
-
-
+        trelloApp = TrelloAppService.getTrelloApp(this);
 
         if(trelloApp.isAuthenticated()) {
             getBoardsHelper();
@@ -39,26 +38,16 @@ public class TrelloSetupActivity extends ActionBarActivity {
             Button loginButton = (Button) findViewById(R.id.trello_login_button);
             loginButton.setText(getResources().getString(R.string.TRELLO_LOGIN_BUTTON_NOT_AUTHENTICATED));
         }
-    }
 
-    public void onTrelloLoginButtonClicked(View v) {
-        if(trelloApp.isAuthenticated()) {
-            // TODO : Logout
-        } else {
-            Intent trelloLoginIntent = new Intent(this, TrelloLoginActivity.class);
-            activeBundle = new Bundle();
-            trelloLoginIntent.putExtras(activeBundle);
-            startActivityForResult(trelloLoginIntent, TrelloLoginActivity.LOGIN_REQUEST_CODE);
-        }
+        // Add self as a listener to the board spinner
+        Spinner boardSpinner = (Spinner) findViewById(R.id.trello_board_spinner);
+        boardSpinner.setOnItemSelectedListener(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == TrelloLoginActivity.LOGIN_REQUEST_CODE) {
             if(resultCode == TrelloLoginActivity.LOGIN_SUCCEEDED){
-                // Update app
-                activeBundle = intent.getExtras();
-                trelloApp = TrelloAppFactory.createTrelloApp(this, activeBundle);
                 getBoardsHelper();
             } else if (resultCode == TrelloLoginActivity.LOGIN_FAILED) {
 
@@ -66,8 +55,21 @@ public class TrelloSetupActivity extends ActionBarActivity {
         }
     }
 
+    public void onTrelloLoginButtonClicked(View v) {
+        if(trelloApp.isAuthenticated()) {
+            TrelloAppService.setAuthenticationToken("", this);
+            // Toggle button and and disable selected board
+            Button loginButton = (Button) findViewById(R.id.trello_login_button);
+            loginButton.setText(getResources().getString(R.string.TRELLO_LOGIN_BUTTON_NOT_AUTHENTICATED));
+            // TODO : Disable selected board
+        } else {
+            Intent trelloLoginIntent = new Intent(this, TrelloLoginActivity.class);
+            startActivityForResult(trelloLoginIntent, TrelloLoginActivity.LOGIN_REQUEST_CODE);
+        }
+    }
+
     private void getBoardsHelper() {
-        trelloAPI = TrelloAppFactory.getTrelloAPIInterface(trelloApp);
+        trelloAPI = TrelloAppService.getTrelloAPIInterface(trelloApp);
         // Get boards
         new FetchBoards().execute(trelloAPI);
 
@@ -75,12 +77,28 @@ public class TrelloSetupActivity extends ActionBarActivity {
         loginButton.setText(getResources().getString(R.string.TRELLO_LOGIN_BUTTON_AUTHENTICATED));
     }
 
-    private void setUpBoardSpinner(List<String> options) {
+    private void setUpBoardSpinner(List<AdapterTuple<String,String>> options, Integer selectedIntex) {
         Spinner spinner = (Spinner) findViewById(R.id.trello_board_spinner);
-        ArrayAdapter<String> spinnerArrayAdapter =
+        ArrayAdapter<AdapterTuple<String,String>> spinnerArrayAdapter =
                 new ArrayAdapter<>(TrelloSetupActivity.this, android.R.layout.simple_spinner_item, options);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerArrayAdapter);
+        if(selectedIntex != null && selectedIntex < options.size()) {
+            spinner.setSelection(selectedIntex);
+        }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if(spinnerOptions != null) {
+            Log.d("debug", "Selected: " + spinnerOptions.get(position).getValue());
+            TrelloAppService.setSelectedBoardID(spinnerOptions.get(position).getKey(), this);
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 
     private class FetchBoards extends AsyncTask<Trello, Integer, List<Board>> {
@@ -93,14 +111,20 @@ public class TrelloSetupActivity extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(List<Board> result) {
-            List<String> options = new ArrayList<>(result.size());
-
+            spinnerOptions = new ArrayList<>(result.size());
+            Integer selectedIndex = null;
+            int i = 0;
             for(Board b : result) {
                 Log.d("debug", "Retreived Board " + b.getName());
-                options.add(b.getName());
+                spinnerOptions.add(new AdapterTuple<String, String>(b.getId(), b.getName()));
+                if(b.getId().equals(trelloApp.getSelectedBoardID())) {
+                    Log.d("debug", "Selected board: " + b.getName());
+                    selectedIndex = i;
+                }
+                i++;
             }
 
-            setUpBoardSpinner(options);
+            setUpBoardSpinner(spinnerOptions, selectedIndex);
         }
     }
 }

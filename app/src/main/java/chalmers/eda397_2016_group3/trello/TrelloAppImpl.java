@@ -6,7 +6,7 @@ package chalmers.eda397_2016_group3.trello;
 public class TrelloAppImpl implements TrelloApp {
     private String applicationID, applicationName, authenticationExpiration;
     private String authenticationToken = null;
-
+    private String selectedBoardID;
 
     public TrelloAppImpl(String applicationID, String applicationName,
                          String authenticationExpiration) {
@@ -46,7 +46,7 @@ public class TrelloAppImpl implements TrelloApp {
 
     @Override
     public boolean isAuthenticated() {
-        return authenticationToken != null;
+        return authenticationToken != null && !authenticationToken.isEmpty();
     }
 
     @Override
@@ -54,4 +54,16 @@ public class TrelloAppImpl implements TrelloApp {
         return authenticationToken;
     }
 
+    @Override
+    public String getSelectedBoardID() {
+        return selectedBoardID;
+    }
+
+    public void setAuthenticationToken(String authenticationToken) {
+        this.authenticationToken = authenticationToken;
+    }
+
+    public void setSelectedBoardID(String selectedBoardID) {
+        this.selectedBoardID = selectedBoardID;
+    }
 }
