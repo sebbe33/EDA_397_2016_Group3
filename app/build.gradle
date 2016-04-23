@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
         applicationId "chalmers.eda397_2016_group3"
         minSdkVersion 17
-        targetSdkVersion 21
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
     }
@@ -22,11 +22,11 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.android.support:design:22.2.0'
     //compile group: 'org.springframework', name: 'spring-web', version: '4.2.5.RELEASE'
     //compile group: 'org.apache.httpcomponents', name: 'httpclient'
     compile group: 'org.trello4j', 'name' : 'trello4j', version: '1.0-SNAPSHOT'
     //compile group: 'com.ning', name: 'async-http-client', version: '1.9.38'
     //compile group: 'com.julienvey.trello', name: 'trello-java-wrapper', version: '0.3.2'
-
 }
