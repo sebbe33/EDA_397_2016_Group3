@@ -87,8 +87,10 @@ public class MainActivity extends ActionBarActivity {
                     mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
                     notificationBuilder.setSound(null);
                     btnStart.setText("Start");
-                    showDialog();
-
+                    showDialog("Time is up!");
+                    SpinnerHour.setEnabled(true);
+                    SpinnerMinute.setEnabled(true);
+                    SpinnerSecond.setEnabled(true);
                 }
             }
         });
@@ -98,6 +100,8 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 if (!timer.isRunning()) {
+
+
                     System.out.println("--Start MyTimer---");
                    // String ss = edtSetTime.getText().toString();
                     String ss = toSeconds(SpinnerHour.getSelectedItem().toString(),
@@ -105,15 +109,24 @@ public class MainActivity extends ActionBarActivity {
                             SpinnerSecond.getSelectedItem().toString());
 
                         totalTimeSeconds = Integer.parseInt(ss);
+                    if(totalTimeSeconds==0){
+                        showDialog("Please set a time first!");
+                    }else {
 
-                    // Start counting
-                    timer.start(1);
-                    btnStart.setText("Pause");
-                    String time = formatTime(timerFormat, totalTimeSeconds*1000);
-                    tv_timer.setText(time);
-                    // Notification
-                    notificationBuilder.setContentText(time);
-                    mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
+                        // Start counting
+                        timer.start(1);
+                        btnStart.setText("Pause");
+                        String time = formatTime(timerFormat, totalTimeSeconds * 1000);
+                        tv_timer.setText(time);
+                        // Notification
+                        notificationBuilder.setContentText(time);
+                        mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
+
+                        SpinnerHour.setEnabled(false);
+                        SpinnerMinute.setEnabled(false);
+                        SpinnerSecond.setEnabled(false);
+                    }
+
                 } else if (!timer.isPaused()) {
                     //pause the timer
                     timer.pause();
@@ -139,6 +152,12 @@ public class MainActivity extends ActionBarActivity {
                 tv_timer.setText(null);
                 btnStart.setText("Start");
                 mNotifyMgr.cancel(R.integer.notification_timer);
+                SpinnerHour.setEnabled(true);
+                SpinnerHour.setSelection(0);
+                SpinnerMinute.setEnabled(true);
+                SpinnerMinute.setSelection(0);
+                SpinnerSecond.setEnabled(true);
+                SpinnerSecond.setSelection(0);
             }
         });
 
@@ -157,16 +176,18 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-    protected void showDialog() {
+    protected void showDialog(String text) {
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         //   builder.setIcon(R.drawable.eb28d25);
-        builder.setTitle("Alert").setMessage("Time is up!")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
 
-                    }
-                });
+           builder.setTitle("Alert").setMessage(text)
+                   .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialog, int which) {
+                       }
+                   });
+
         AlertDialog dialog = builder.create();
         dialog.show();
     }
@@ -179,6 +200,7 @@ public class MainActivity extends ActionBarActivity {
 
         return String.valueOf(hours*3600+minutes*60+seconds);
     }
+
 
 
 }
