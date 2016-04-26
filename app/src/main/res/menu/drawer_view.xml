@@ -14,13 +14,19 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-<resources>
-    <color name="window_background">#FFF5F5F5</color>
-    <color name="colorPrimary">#C62828</color>
-    <color name="colorPrimaryDark">#B71C1C</color>
-    <color name="colorAccent">#FFA726</color>
-    <color name="fab_background_out">#FF6600</color>
-    <color name="fab_background_in">#D32F2F</color>
-    <color name="image_background">#F8CC32</color>
-</resources>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_trello"
+            android:icon="@drawable/trello_ic"
+            android:title="Trello" />
+        <item
+            android:id="@+id/navigation_github"
+            android:icon="@drawable/github_ic"
+            android:title="GitHub" />
+
+    </group>
+
+
+</menu>

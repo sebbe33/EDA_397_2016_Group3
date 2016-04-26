@@ -15,12 +15,19 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <color name="window_background">#FFF5F5F5</color>
-    <color name="colorPrimary">#C62828</color>
-    <color name="colorPrimaryDark">#B71C1C</color>
-    <color name="colorAccent">#FFA726</color>
-    <color name="fab_background_out">#FF6600</color>
-    <color name="fab_background_in">#D32F2F</color>
-    <color name="image_background">#F8CC32</color>
-</resources>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="192dp"
+    android:background="?attr/colorPrimaryDark"
+    android:padding="16dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    android:orientation="vertical"
+    android:gravity="bottom">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Username"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+
+</LinearLayout>
