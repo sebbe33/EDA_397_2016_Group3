@@ -37,11 +37,15 @@ public class PunchInActivity  extends AppCompatActivity {
 
         status=0;
 
+        Intent intent = getIntent();
+        String menu_name = intent.getStringExtra("title");
+
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle("Feature Name");
+        collapsingToolbar.setTitle(menu_name);
 
 
         final TextView textView1= (TextView) findViewById(R.id.feature_status);

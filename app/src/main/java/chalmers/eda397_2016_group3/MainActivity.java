@@ -86,6 +86,11 @@ public class MainActivity extends AppCompatActivity {
                 fragmentClass = FragmentGithub.class;
                 break;
 
+            case R.id.navigation_trello_feature:
+
+                fragmentClass = FragmentFeature.class;
+                break;
+
 
             default:
                 fragmentClass = TrelloSetupFragment.class;
@@ -104,10 +109,9 @@ public class MainActivity extends AppCompatActivity {
         // Highlight the selected item, update the title, and close the drawer
         menuItem.setChecked(true);
 
-        if(menuItem.getTitle().equals("Trello"))
-            setTitle("Trello");
-        else
-            setTitle("GitHub");
+
+            setTitle(menuItem.getTitle());
+
 
 
         mDrawerLayout.closeDrawers();

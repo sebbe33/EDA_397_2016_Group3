@@ -20,7 +20,13 @@
         <item
             android:id="@+id/navigation_trello"
             android:icon="@drawable/trello_ic"
-            android:title="Trello" />
+            android:title="Trello Setup" />
+
+        <item
+            android:id="@+id/navigation_trello_feature"
+            android:icon="@drawable/trello_ic"
+            android:title="Trello Features" />
+
         <item
             android:id="@+id/navigation_github"
             android:icon="@drawable/github_ic"
