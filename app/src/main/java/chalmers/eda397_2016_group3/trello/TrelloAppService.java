@@ -15,7 +15,8 @@ import chalmers.eda397_2016_group3.R;
  */
 public class TrelloAppService {
     public static final String BUNDLE_TOKEN_KEY = "TRELLO_TOKEN_KEY",
-            TRELLO_SELECTED_BOARD_ID ="TRELLO_SELECTED_BOARD_ID";
+            TRELLO_SELECTED_BOARD_ID ="TRELLO_SELECTED_BOARD_ID",
+            TRELLO_CARD_ID = "TRELLO_CARD_ID";
     private static final String TRELLO_SHARED_PREFERENCES = "TRELLO_SHARED_PREFERENCES";
 
     private static TrelloAppImpl instance = null;
