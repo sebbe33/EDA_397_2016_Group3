@@ -1,10 +1,6 @@
-package chalmers.eda397_2016_group3;
+package chalmers.eda397_2016_group3.timer;
 
 import android.os.Handler;
-import android.util.Log;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by Alex on 2016-04-19.

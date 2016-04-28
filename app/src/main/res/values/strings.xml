@@ -158,4 +158,13 @@
         <item>60</item>
     </string-array>
 
+    <string name="TRELLO_API_KEY">1d303eb6413db706b3f41136d51e8a51</string>
+    <string name="TRELLO_AUTHENTICATION_EXPIRATION">1hour</string>
+    <string name="TRELLO_TOKEN_KEY">TRELLO_TOKEN_KEY</string>
+
+
+    <string name="TRELLO_LOGIN_BUTTON_NOT_AUTHENTICATED">Connect to Trello</string>
+    <string name="TRELLO_LOGIN_BUTTON_AUTHENTICATED">Disconnect from Trello</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
