@@ -1,8 +1,7 @@
-package chalmers.eda397_2016_group3;
+package chalmers.eda397_2016_group3.trello;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,25 +9,33 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import org.trello4j.Trello;
+import org.trello4j.model.Card;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import chalmers.eda397_2016_group3.R;
 import chalmers.eda397_2016_group3.adapter.GridAdapter;
+import chalmers.eda397_2016_group3.utils.AdapterTuple;
 
 /**
  * Created by N10 on 4/26/2016.
  */
-public class FragmentFeature extends Fragment {
+public class TasksFragment extends Fragment {
+    private TrelloApp trelloApp = null;
+    private Trello trelloAPI = null;
 
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView.Adapter mAdapter;
 
-    RecyclerView mRecyclerView;
-    RecyclerView.LayoutManager mLayoutManager;
-    RecyclerView.Adapter mAdapter;
-
+    private List<AdapterTuple<String,String>> listItems = null;
 
     public static Fragment newInstance(Context context) {
-        FragmentFeature f = new FragmentFeature();
+        TasksFragment f = new TasksFragment();
         return f;
     }
 
@@ -63,6 +70,18 @@ public class FragmentFeature extends Fragment {
     }
 
     @Override
+    public void onStart () {
+        super.onStart();
+        trelloApp = TrelloAppService.getTrelloApp(getActivity());
+        trelloAPI = TrelloAppService.getTrelloAPIInterface(trelloApp);
+
+        if(trelloApp.isAuthenticated()) {
+            fetchTasks();
+        }
+
+    }
+
+    @Override
     public void onResume(){
         super.onResume();
 
@@ -70,15 +89,34 @@ public class FragmentFeature extends Fragment {
 
     @Override
     public void onPause() {
-
         super.onPause();
     }
     @Override
     public void onDestroy() {
-
         super.onDestroy();
     }
 
+    private void fetchTasks() {
+        new CardFetcher(trelloAPI).execute(trelloApp.getSelectedBoardID());
+    }
 
+    private class CardFetcher extends AsyncTask<String, Integer, List<Card>> {
+        private final Trello trelloAPI;
+
+        public CardFetcher(Trello trelloAPI) {
+            this.trelloAPI = trelloAPI;
+        }
+
+        @Override
+        protected List<Card> doInBackground(String... params) {
+            String board = params[0];
+            return trelloAPI.getCardsByBoard(board);
+        }
+
+        @Override
+        protected void onPostExecute(List<Card> result) {
+            mRecyclerView.setAdapter(new TaskListItemAdapter(result));
+        }
+    }
 
 }
