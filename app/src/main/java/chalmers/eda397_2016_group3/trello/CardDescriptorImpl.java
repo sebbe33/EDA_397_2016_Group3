@@ -36,6 +36,7 @@ public class CardDescriptorImpl implements CardDescriptor {
         if(arguments == null || arguments.length != 3) {
             startDate = new Date(0);
             timeSpent = new Date(0);
+            timeSpent.setHours(2);
             return;
         }
 

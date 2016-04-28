@@ -87,6 +87,7 @@
 
 
                     <TextView
+                        android:id="@+id/feature_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="4dp"
@@ -132,9 +133,10 @@
 
 
                     <TextView
+                        android:id="@+id/other_details_header"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Other details"
+                        android:text="Description"
                         android:padding="4dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
                     <View
@@ -143,7 +145,7 @@
                         android:background="#d3d3d3" />
 
                     <TextView
-                        android:id="@+id/temperature_inside"
+                        android:id="@+id/other_details_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"

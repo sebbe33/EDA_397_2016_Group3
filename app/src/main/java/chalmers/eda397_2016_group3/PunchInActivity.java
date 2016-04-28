@@ -23,7 +23,11 @@ import com.bumptech.glide.Glide;
 import org.trello4j.Trello;
 import org.trello4j.model.Board;
 import org.trello4j.model.Card;
+import org.w3c.dom.Text;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -147,8 +151,15 @@ public class PunchInActivity  extends AppCompatActivity {
         CardDescriptor cardDescriptor = new CardDescriptorImpl(c);
         final TextView textView1= (TextView) findViewById(R.id.feature_status);
         final TextView textView2= (TextView) findViewById(R.id.feature_time);
-        textView1.setText("Started work: " + cardDescriptor.getStartDate().toString());
-        textView2.setText("Time spent: " + cardDescriptor.getTimeSpent().toString());
+        final TextView featureNameTextView = (TextView) findViewById(R.id.feature_name);
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+        featureNameTextView.setText(c.getName());
+        textView1.setText("Started work: " + new SimpleDateFormat("yyyy-MM-dd").format(cardDescriptor.getStartDate()));
+        textView2.setText("Time spent: " +
+                df.format((cardDescriptor.getTimeSpent().getTime() / (double)(3600 * 1000)) ) + "h");
+
+        ((TextView) findViewById(R.id.other_details_text)).setText(c.getDesc());
     }
 
     private class FetchCard extends AsyncTask<String, Integer, Card> {
