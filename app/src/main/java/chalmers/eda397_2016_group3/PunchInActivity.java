@@ -125,7 +125,7 @@ public class PunchInActivity  extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        return false;
+        return true;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
