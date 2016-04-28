@@ -1,7 +1,10 @@
 package chalmers.eda397_2016_group3.trello;
 
+import android.util.Log;
+
 import org.trello4j.model.Card;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -13,8 +16,13 @@ public class CardDescriptorImpl implements CardDescriptor {
 
     private final Card.Attachment attachment;
     public CardDescriptorImpl(Card c) {
+        if(c.getAttachments() == null) {
+            c.setAttachments(new ArrayList<Card.Attachment>());
+        }
+
         if(c.getAttachments().isEmpty()) {
             attachment = c.new Attachment();
+            attachment.setBytes("");
             c.getAttachments().add(attachment);
         } else {
             attachment = c.getAttachments().get(0);
@@ -26,7 +34,7 @@ public class CardDescriptorImpl implements CardDescriptor {
     private void parseAttachment(Card.Attachment attachment) {
         String[] arguments = attachment.getBytes().split("|");
         if(arguments == null || arguments.length != 3) {
-            startDate = new Date();
+            startDate = new Date(0);
             timeSpent = new Date(0);
             return;
         }
@@ -38,16 +46,16 @@ public class CardDescriptorImpl implements CardDescriptor {
 
     @Override
     public boolean isActive() {
-        return false;
+        return isActive;
     }
 
     @Override
     public Date getStartDate() {
-        return null;
+        return startDate;
     }
 
     @Override
     public Date getTimeSpent() {
-        return null;
+        return timeSpent;
     }
 }

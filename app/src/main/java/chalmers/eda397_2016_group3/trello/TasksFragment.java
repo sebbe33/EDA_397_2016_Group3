@@ -1,6 +1,7 @@
 package chalmers.eda397_2016_group3.trello;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import org.trello4j.model.Card;
 import java.util.ArrayList;
 import java.util.List;
 
+import chalmers.eda397_2016_group3.PunchInActivity;
 import chalmers.eda397_2016_group3.R;
 import chalmers.eda397_2016_group3.adapter.GridAdapter;
 import chalmers.eda397_2016_group3.utils.AdapterTuple;
@@ -24,7 +26,7 @@ import chalmers.eda397_2016_group3.utils.AdapterTuple;
 /**
  * Created by N10 on 4/26/2016.
  */
-public class TasksFragment extends Fragment {
+public class TasksFragment extends Fragment implements TaskListItemAdapter.OnCardClickListener {
     private TrelloApp trelloApp = null;
     private Trello trelloAPI = null;
 
@@ -100,6 +102,16 @@ public class TasksFragment extends Fragment {
         new CardFetcher(trelloAPI).execute(trelloApp.getSelectedBoardID());
     }
 
+    @Override
+    public void onCardClicked(Card c) {
+        // A card got clicked, time to start a new intent with the card send along in a bundle.
+        Bundle bundle = new Bundle();
+        bundle.putString(TrelloAppService.TRELLO_CARD_ID, c.getId());
+        Intent intent = new Intent(getActivity(), PunchInActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+
     private class CardFetcher extends AsyncTask<String, Integer, List<Card>> {
         private final Trello trelloAPI;
 
@@ -115,7 +127,7 @@ public class TasksFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<Card> result) {
-            mRecyclerView.setAdapter(new TaskListItemAdapter(result));
+            mRecyclerView.setAdapter(new TaskListItemAdapter(result, TasksFragment.this));
         }
     }
 

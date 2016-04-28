@@ -1,5 +1,6 @@
 package chalmers.eda397_2016_group3.trello;
 
+import android.support.v7.internal.widget.AdapterViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.trello4j.model.Card;
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -26,9 +28,11 @@ public class TaskListItemAdapter extends RecyclerView.Adapter<TaskListItemAdapte
     }
 
     private List<Card> cards;
+    private OnCardClickListener onClickListener = null;
 
-    public TaskListItemAdapter(List<Card> cards) {
+    public TaskListItemAdapter(List<Card> cards, OnCardClickListener listener) {
         this.cards = cards;
+        this.onClickListener = listener;
     }
 
     @Override
@@ -43,12 +47,31 @@ public class TaskListItemAdapter extends RecyclerView.Adapter<TaskListItemAdapte
 
     @Override
     public void onBindViewHolder(TaskListItemAdapter.ViewHolder holder, int position) {
-        ((TextView)holder.mTextView.findViewById(R.id.sub_card))
-                .setText(cards.get(position).getName());
+        TextView textView = (TextView)holder.mTextView.findViewById(R.id.sub_card);
+        textView.setText(cards.get(position).getName());
+        holder.mTextView.setOnClickListener(new OnClickListenerWrapper(cards.get(position), onClickListener));
     }
 
     @Override
     public int getItemCount() {
         return cards.size();
+    }
+
+    private class OnClickListenerWrapper implements View.OnClickListener {
+        private Card c;
+        private OnCardClickListener listener;
+        public OnClickListenerWrapper(Card c, OnCardClickListener listener) {
+            this.c = c;
+            this.listener = listener;
+        }
+
+        @Override
+        public void onClick(View view) {
+            listener.onCardClicked(c);
+        }
+    }
+
+    public interface OnCardClickListener {
+        void onCardClicked(Card c);
     }
 }
