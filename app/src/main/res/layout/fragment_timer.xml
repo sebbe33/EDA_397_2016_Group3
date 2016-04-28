@@ -1,11 +1,13 @@
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<?xml version = "1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/apk/tools"
 
     android:id="@+id/drawer_layout"
-    android:layout_width="850px"
+    android:layout_width="match_parent"
 
-    android:layout_height="1000px"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:gravity="center_horizontal">
     <!--android:layout_height="match_parent"
     android:layout_width="match_parent"-->
 
@@ -13,36 +15,40 @@
         android:paddingTop="150px"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal">
 
 
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dip"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp">
             <TextView
-                android:layout_width="70dp"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="Set Time"/>
 
             <Spinner
-                android:layout_width="76dp"
-                android:layout_height="49dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:id="@+id/hourSpinner"
                 android:spinnerMode="dropdown"
                 android:entries="@array/Hours"/>
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="center"
                 android:text=":"
                 android:id="@+id/textView1" />
 
             <Spinner
-                android:layout_width="79dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:id="@+id/MinuteSpinner"
                 android:spinnerMode="dropdown"
@@ -50,13 +56,13 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="center"
                 android:text=":"
                 android:id="@+id/textView" />
 
             <Spinner
-                android:layout_width="72dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:id="@+id/SecondSpinner"
                 android:spinnerMode="dropdown"
@@ -95,4 +101,4 @@
                 android:text="Reset" />
         </LinearLayout>
     </LinearLayout>
-</android.support.v4.widget.DrawerLayout>
+</RelativeLayout>
