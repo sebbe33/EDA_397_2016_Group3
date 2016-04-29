@@ -50,7 +50,7 @@ public class FragmentTimer extends Fragment {
     public void onStart(){
         super.onStart();
         final Button btnStart = (Button) getView().findViewById(R.id.btnStart);
-        Button btnRest = (Button) getView().findViewById(R.id.btnReset);
+        final Button btnRest = (Button) getView().findViewById(R.id.btnReset);
         final Spinner SpinnerHour = (Spinner) getView().findViewById(R.id.hourSpinner);
         final Spinner SpinnerMinute = (Spinner) getView().findViewById(R.id.MinuteSpinner);
         final Spinner SpinnerSecond = (Spinner) getView().findViewById(R.id.SecondSpinner);
@@ -89,6 +89,7 @@ public class FragmentTimer extends Fragment {
                     SpinnerHour.setEnabled(true);
                     SpinnerMinute.setEnabled(true);
                     SpinnerSecond.setEnabled(true);
+                    btnRest.setEnabled(true);
                 }
             }
         });
@@ -120,12 +121,14 @@ public class FragmentTimer extends Fragment {
                         SpinnerHour.setEnabled(false);
                         SpinnerMinute.setEnabled(false);
                         SpinnerSecond.setEnabled(false);
+                        btnRest.setEnabled(false);
                     }
 
                 } else if (!timer.isPaused()) {
                     //pause the timer
                     timer.pause();
                     btnStart.setText("Resume");
+                    btnRest.setEnabled(true);
                     // Notification
                     //notificationBuilder.setContentText("Paused");
                    // mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
@@ -133,6 +136,7 @@ public class FragmentTimer extends Fragment {
                     //resume the timer
                     timer.resume();
                     btnStart.setText("Pause");
+                    btnRest.setEnabled(false);
                 }
             }
         });
@@ -146,13 +150,14 @@ public class FragmentTimer extends Fragment {
                     timer.stop();
                 tv_timer.setText(null);
                 btnStart.setText("Start");
-                mNotifyMgr.cancel(R.integer.notification_timer);
+               // mNotifyMgr.cancel(R.integer.notification_timer);
                 SpinnerHour.setEnabled(true);
                 SpinnerHour.setSelection(0);
                 SpinnerMinute.setEnabled(true);
                 SpinnerMinute.setSelection(0);
                 SpinnerSecond.setEnabled(true);
                 SpinnerSecond.setSelection(0);
+
             }
         });
     }
