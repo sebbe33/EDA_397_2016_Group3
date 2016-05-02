@@ -2,7 +2,6 @@ package chalmers.eda397_2016_group3.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +15,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import chalmers.eda397_2016_group3.PunchInActivity;
+import chalmers.eda397_2016_group3.trello.PunchInActivity;
 import chalmers.eda397_2016_group3.R;
 
 

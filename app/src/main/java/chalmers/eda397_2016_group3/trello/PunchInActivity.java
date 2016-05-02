@@ -1,14 +1,11 @@
-package chalmers.eda397_2016_group3;
+package chalmers.eda397_2016_group3.trello;
 
-import android.content.Context;
-import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -22,25 +19,14 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import org.trello4j.Trello;
-import org.trello4j.model.Board;
 import org.trello4j.model.Card;
-import org.w3c.dom.Text;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
-import chalmers.eda397_2016_group3.trello.CardDescriptor;
-import chalmers.eda397_2016_group3.trello.CardDescriptorImpl;
-import chalmers.eda397_2016_group3.trello.TrelloApp;
-import chalmers.eda397_2016_group3.trello.TrelloAppImpl;
-import chalmers.eda397_2016_group3.trello.TrelloAppService;
-import chalmers.eda397_2016_group3.trello.TrelloImproved;
-import chalmers.eda397_2016_group3.utils.AdapterTuple;
+import chalmers.eda397_2016_group3.R;
 
 /**
  * Created by N10 on 4/26/2016.

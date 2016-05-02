@@ -17,7 +17,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PunchInActivity" />
+        <activity android:name=".trello.PunchInActivity" />
         <activity android:name=".trello.TrelloLoginActivity"></activity>
     </application>
 

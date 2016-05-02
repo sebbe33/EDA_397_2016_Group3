@@ -1,17 +1,14 @@
 package chalmers.eda397_2016_group3.trello;
 
-import android.util.Log;
-
 import org.trello4j.model.Card;
 
-import java.util.Arrays;
 import java.util.Date;
 
 /**
  * Created by sebastianblomberg on 2016-04-26.
  */
 public class CardDescriptorImpl implements CardDescriptor {
-    private static final String OPENING_DELIMITER = "<<<<< Metadata - Do not touch >>>>>",
+    public static final String OPENING_DELIMITER = "<<<<< Metadata - Do not touch >>>>>",
             CLOSING_DELIMITER = "<<<<< End of Metadata >>>>>";
     private boolean isActive = false;
     private Date startDate, endDate, timeSpent;
@@ -22,6 +19,7 @@ public class CardDescriptorImpl implements CardDescriptor {
         String desc = c.getDesc();
         if(desc == null) {
             desc = "";
+            c.setDesc("");
         }
         parseDescription(desc);
         this.card = c;
@@ -34,14 +32,17 @@ public class CardDescriptorImpl implements CardDescriptor {
         if(openingIndex != -1 && closingIndex != -1) {
             String[] arguments = description.substring(
                     openingIndex + OPENING_DELIMITER.length(), closingIndex).split("\\|");
-            Log.d("debug", "Arg: " + Arrays.toString(arguments));
             if (arguments != null && arguments.length == 5) {
-                isActive = "true".equals(arguments[0]);
-                startDate = new Date(Long.parseLong(arguments[1]));
-                timeSpent = new Date(Long.parseLong(arguments[2]));
-                endDate = new Date(Long.parseLong(arguments[3]));
-                workingTimeStart = new Date(Long.parseLong(arguments[4]));
-                return;
+                try {
+                    isActive = "true".equals(arguments[0]);
+                    startDate = new Date(Long.parseLong(arguments[1]));
+                    timeSpent = new Date(Long.parseLong(arguments[2]));
+                    endDate = new Date(Long.parseLong(arguments[3]));
+                    workingTimeStart = new Date(Long.parseLong(arguments[4]));
+                    return;
+                } catch (NumberFormatException e) {
+                    // Do nothing, default values will be set
+                }
             }
         }
 
@@ -114,14 +115,14 @@ public class CardDescriptorImpl implements CardDescriptor {
         int openingIndex = card.getDesc().indexOf(OPENING_DELIMITER);
         int closingIndex = card.getDesc().indexOf(CLOSING_DELIMITER);
 
-        String beforeMetadata = description;
-        if(closingIndex != -1) {
-            beforeMetadata = description.substring(0, openingIndex - 1);
+        String beforeMetadata = "";
+        if(openingIndex > 0) {
+            beforeMetadata = description.substring(0, openingIndex);
         }
 
         String afterMetadata = "";
         if(closingIndex != -1) {
-            afterMetadata = description.substring(closingIndex + CLOSING_DELIMITER.length() + 1, description.length());
+            afterMetadata = description.substring(closingIndex + CLOSING_DELIMITER.length(), description.length());
         }
 
         return beforeMetadata + afterMetadata;
@@ -138,7 +139,6 @@ public class CardDescriptorImpl implements CardDescriptor {
         String description = card.getDesc();
         int openingIndex = description.indexOf(OPENING_DELIMITER);
         int closingIndex = description.indexOf(CLOSING_DELIMITER);
-        Log.d("debug", "OpeningIndex : " + openingIndex + " | Closing : " + closingIndex);
 
         String beforeMetadata = description;
         if(closingIndex != -1) {
@@ -147,7 +147,7 @@ public class CardDescriptorImpl implements CardDescriptor {
 
         String afterMetadata = "";
         if(closingIndex != -1) {
-            afterMetadata = description.substring(closingIndex + CLOSING_DELIMITER.length(), description.length());
+            afterMetadata = description.substring(closingIndex + CLOSING_DELIMITER.length() + 1, description.length());
         }
 
         card.setDesc(beforeMetadata + newMetadata + afterMetadata);

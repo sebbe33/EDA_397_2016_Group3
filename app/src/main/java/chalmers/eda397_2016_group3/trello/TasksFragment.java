@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import org.trello4j.Trello;
 import org.trello4j.model.Card;
@@ -18,7 +17,6 @@ import org.trello4j.model.Card;
 import java.util.ArrayList;
 import java.util.List;
 
-import chalmers.eda397_2016_group3.PunchInActivity;
 import chalmers.eda397_2016_group3.R;
 import chalmers.eda397_2016_group3.adapter.GridAdapter;
 import chalmers.eda397_2016_group3.utils.AdapterTuple;
