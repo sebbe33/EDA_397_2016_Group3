@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,6 +30,8 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import chalmers.eda397_2016_group3.trello.CardDescriptor;
@@ -36,6 +39,7 @@ import chalmers.eda397_2016_group3.trello.CardDescriptorImpl;
 import chalmers.eda397_2016_group3.trello.TrelloApp;
 import chalmers.eda397_2016_group3.trello.TrelloAppImpl;
 import chalmers.eda397_2016_group3.trello.TrelloAppService;
+import chalmers.eda397_2016_group3.trello.TrelloImproved;
 import chalmers.eda397_2016_group3.utils.AdapterTuple;
 
 /**
@@ -49,6 +53,7 @@ public class PunchInActivity  extends AppCompatActivity {
     int status;
 
     private Card activeCard;
+    private CardDescriptor cardDescriptor = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,39 +90,6 @@ public class PunchInActivity  extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         loadBackdrop(R.drawable.background);
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        if(status==0) {
-            fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_background_out)));
-
-
-        }
-        else{
-            fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_background_in)));
-
-        }
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-
-                if(status==0){
-                    Snackbar.make(view,"Feature started", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                    fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_background_in)));
-                    status=1;
-                }
-                else{
-                    Snackbar.make(view, "Feature Stopped", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                    fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_background_out)));
-                    status=0;
-                }
-
-            }
-        });
-
-
     }
 
     private void loadBackdrop(int imgId) {
@@ -144,22 +116,47 @@ public class PunchInActivity  extends AppCompatActivity {
 
     }
 
-    private void updateView(Card c) {
+    private void updateView() {
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle(c.getName());
+        collapsingToolbar.setTitle(activeCard.getName());
 
-        CardDescriptor cardDescriptor = new CardDescriptorImpl(c);
-        final TextView textView1= (TextView) findViewById(R.id.feature_status);
-        final TextView textView2= (TextView) findViewById(R.id.feature_time);
-        final TextView featureNameTextView = (TextView) findViewById(R.id.feature_name);
+        final TextView startDateView = (TextView) findViewById(R.id.feature_start_date);
+        final TextView timeSpentView = (TextView) findViewById(R.id.feature_time);
+        final TextView endDateView = (TextView) findViewById(R.id.feature_end_date);
+        final Button finishButton = (Button) findViewById(R.id.feature_done_button);
+
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.CEILING);
-        featureNameTextView.setText(c.getName());
-        textView1.setText("Started work: " + new SimpleDateFormat("yyyy-MM-dd").format(cardDescriptor.getStartDate()));
-        textView2.setText("Time spent: " +
+
+        if(cardDescriptor.getStartDate().getTime() != 0) {
+            startDateView.setText("Started work: " + new SimpleDateFormat("yyyy-MM-dd").format(cardDescriptor.getStartDate()));
+            finishButton.setOnClickListener(onFinishActivityListener);
+            finishButton.setVisibility(View.VISIBLE);
+        } else {
+            finishButton.setVisibility(View.GONE);
+        }
+
+        if(cardDescriptor.getEndDate().getTime() == 0) {
+            endDateView.setVisibility(View.GONE);
+        } else {
+            finishButton.setVisibility(View.GONE);
+            endDateView.setVisibility(View.VISIBLE);
+            endDateView.setText("Finished work: " + new SimpleDateFormat("yyyy-MM-dd").format(cardDescriptor.getEndDate()));
+        }
+
+        timeSpentView.setText("Time spent: " +
                 df.format((cardDescriptor.getTimeSpent().getTime() / (double)(3600 * 1000)) ) + "h");
 
-        ((TextView) findViewById(R.id.other_details_text)).setText(c.getDesc());
+        ((TextView) findViewById(R.id.other_details_text)).setText(cardDescriptor.getDescription());
+
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        if(!cardDescriptor.isActive()) {
+            fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_background_out)));
+        } else {
+            fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_background_in)));
+        }
+
+        fab.setOnClickListener(onTimeRecordingToggleListener);
     }
 
     private class FetchCard extends AsyncTask<String, Integer, Card> {
@@ -178,9 +175,57 @@ public class PunchInActivity  extends AppCompatActivity {
         @Override
         protected void onPostExecute(Card result) {
             PunchInActivity.this.activeCard = result;
-            updateView(PunchInActivity.this.activeCard);
+            PunchInActivity.this.cardDescriptor = new CardDescriptorImpl(result);
+            updateView();
         }
     }
+
+    private class UpdateCardDescriptorTask extends AsyncTask<CardDescriptor, Integer, CardDescriptor> {
+        private final TrelloImproved trelloAPI;
+
+        public UpdateCardDescriptorTask(TrelloImproved trelloAPI) {
+            this.trelloAPI = trelloAPI;
+        }
+
+        @Override
+        protected CardDescriptor doInBackground(CardDescriptor... params) {
+            trelloAPI.updateCardDescriptor(params[0]);
+            return params[0];
+        }
+
+        @Override
+        protected void onPostExecute(CardDescriptor result) {
+            Log.d("debug", "update succeded");
+        }
+    }
+
+
+    private View.OnClickListener onTimeRecordingToggleListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if(cardDescriptor.isActive()) {
+                cardDescriptor.stopRecordingWorkingTime();
+            } else {
+                cardDescriptor.startRecordingWorkingTime();
+            }
+            updateView();
+
+            new UpdateCardDescriptorTask(
+                    TrelloAppService.getTrelloAPIInterface(TrelloAppService.getTrelloApp(PunchInActivity.this))
+            ).execute(cardDescriptor);
+        }
+    };
+
+    private View.OnClickListener onFinishActivityListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            cardDescriptor.setEndDate(new Date(System.currentTimeMillis()));
+            new UpdateCardDescriptorTask(
+                    TrelloAppService.getTrelloAPIInterface(TrelloAppService.getTrelloApp(PunchInActivity.this))
+            ).execute(cardDescriptor);
+            updateView();
+        }
+    };
 
 }
 
