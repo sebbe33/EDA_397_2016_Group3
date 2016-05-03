@@ -1,5 +1,8 @@
 package chalmers.eda397_2016_group3.trello;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 /**
  * Created by Sebastian Blomberg on 2016-04-19.
  */
@@ -23,10 +26,15 @@ public class TrelloAppImpl implements TrelloApp {
 
     @Override
     public String getAuthenticationURL() {
-        return "https://trello.com/1/connect?key="+ applicationID
-                + "&name=" + applicationName
-                + "&response_type=token&scope=read,write"
-                + "&expiration=" + authenticationExpiration;
+        try {
+            return "https://trello.com/1/connect?key="+ URLEncoder.encode(applicationID,"UTF-8")
+                    + "&name=" + URLEncoder.encode(applicationName,"UTF-8")
+                    + "&response_type=token&scope=read,write"
+                    + "&expiration=" + URLEncoder.encode(authenticationExpiration,"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     @Override
