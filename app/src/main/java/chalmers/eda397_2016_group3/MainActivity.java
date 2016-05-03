@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 
-
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -19,11 +18,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import chalmers.eda397_2016_group3.trello.TasksFragment;
 import chalmers.eda397_2016_group3.timer.FragmentTimer;
 import chalmers.eda397_2016_group3.timer.MyTimer;
 import chalmers.eda397_2016_group3.trello.TrelloSetupFragment;
@@ -107,6 +108,11 @@ public class MainActivity extends AppCompatActivity {
                 fragmentClass = FragmentGithub.class;
                 break;
 
+            case R.id.navigation_trello_feature:
+
+                fragmentClass = TasksFragment.class;
+                break;
+
             case R.id.navigation_timer:
                 fragmentClass = FragmentTimer.class;
                 break;
@@ -128,13 +134,13 @@ public class MainActivity extends AppCompatActivity {
         // Highlight the selected item, update the title, and close the drawer
         menuItem.setChecked(true);
 
-        if(menuItem.getTitle().equals("Trello"))
+        setTitle(menuItem.getTitle());
+        /*if(menuItem.getTitle().equals("Trello"))
             setTitle("Trello");
         else if (menuItem.getTitle().equals("Github"))
             setTitle("GitHub");
         else if (menuItem.getTitle().equals("Timer"))
-            setTitle("Timer");
-
+            setTitle("Timer");*/
         mDrawerLayout.closeDrawers();
     }
 
