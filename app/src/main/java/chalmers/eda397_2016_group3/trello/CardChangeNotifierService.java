@@ -19,22 +19,46 @@ import chalmers.eda397_2016_group3.MainActivity;
 import chalmers.eda397_2016_group3.R;
 
 public class CardChangeNotifierService extends IntentService implements CardChangePoller.CardChangeListener {
+    private static List<CardChange> cardChanges = new ArrayList<>();
+    private static List<CardChangePoller.CardChangeListener> changeListeners = new ArrayList<>();
     private static final long DEFAULT_POLL_INTERVAL = 10000;
 
-    private List<CardChangePoller.CardChangeListener> listeners = null;
     private CardChangePoller cardChangePoller;
 
     public CardChangeNotifierService() {
         super("CardChangeNotifierService");
-        listeners = new ArrayList<>();
-        this.listeners.add(this);
-
     }
 
-    public CardChangeNotifierService(String name, List<CardChangePoller.CardChangeListener> changeListeners) {
-        super(name);
-        this.listeners = new ArrayList<>(changeListeners);
-        this.listeners.add(this);
+    public static void registerCardChangeListener(CardChangePoller.CardChangeListener listener) {
+        changeListeners.add(listener);
+    }
+
+    public static void removeCardChangeListener(CardChangePoller.CardChangeListener listener) {
+        changeListeners.remove(listener);
+    }
+
+    public static List<CardChange> getCardChanges() {
+        return cardChanges;
+    }
+
+    public static void clearCardChanges() {
+        cardChanges.clear();
+    }
+
+    public static void removeCardChange(CardChange c) {
+        cardChanges.remove(c);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        registerCardChangeListener(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        removeCardChangeListener(this);
     }
 
     @Override
@@ -48,7 +72,7 @@ public class CardChangeNotifierService extends IntentService implements CardChan
 
         TrelloImproved trelloAPIInterface = TrelloAppService.getTrelloAPIInterface(trelloApp);
 
-        cardChangePoller = new CardChangePoller(trelloAPIInterface, trelloApp.getSelectedBoardID(), listeners);
+        cardChangePoller = new CardChangePoller(trelloAPIInterface, trelloApp.getSelectedBoardID(), changeListeners);
 
         while (true) {
             Log.d("debug", "Polling...");
@@ -74,6 +98,9 @@ public class CardChangeNotifierService extends IntentService implements CardChan
             Log.d("debug", "Card change ignored. Does not contain a change of list id");
             return;
         }
+
+        // Stack the card change
+        cardChanges.add(new CardChange(oldCard, newCard));
 
         String description = newCard.getName() + " moved to another list";
 
@@ -110,5 +137,22 @@ public class CardChangeNotifierService extends IntentService implements CardChan
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
         mNotificationManager.notify(1, mBuilder.build());
+    }
+
+    public static class CardChange {
+        private Card oldCard,newCard;
+        public CardChange(Card oldCard, Card newCard) {
+            this.oldCard = oldCard;
+            this.newCard = newCard;
+        }
+
+        public Card getOldCard() {
+            return oldCard;
+        }
+
+        public Card getNewCard() {
+            return newCard;
+        }
+
     }
 }

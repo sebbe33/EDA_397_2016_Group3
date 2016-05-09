@@ -15,6 +15,7 @@ import android.widget.Spinner;
 
 import org.trello4j.Trello;
 import org.trello4j.model.Board;
+import org.trello4j.model.Card;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
 import chalmers.eda397_2016_group3.R;
 import chalmers.eda397_2016_group3.utils.AdapterTuple;
 
-public class TrelloNotificationsFragment extends Fragment {
+public class TrelloNotificationsFragment extends Fragment implements CardChangePoller.CardChangeListener {
     private TrelloApp trelloApp = null;
     private Trello trelloAPI = null;
     private List<AdapterTuple<String,String>> spinnerOptions = null;
@@ -30,6 +31,11 @@ public class TrelloNotificationsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CardChangeNotifierService.registerCardChangeListener(this);
+
+        // READ!!!!!!! Use CardChangeNotifierService.getCardChanges(); to get a list of all card changes
+        // Use CardChangeNotifierService.clear(); to clear all changes
+        // Use  CardChangeNotifierService.removeCardChange(cardchange); to remove on change
     }
 
     @Override
@@ -40,8 +46,16 @@ public class TrelloNotificationsFragment extends Fragment {
         return view;
     }
 
+
     @Override
-    public void onStart () {
-        super.onStart();
+    public void onDestroy() {
+        super.onDestroy();
+        CardChangeNotifierService.removeCardChangeListener(this);
+    }
+
+    @Override
+    public void onCardChange(Card oldCard, Card newCard) {
+        Log.d("debug", "Got card change while viewing the notifications fragment");
+        // TODO : Update the list
     }
 }
