@@ -13,38 +13,28 @@ import java.util.Map;
 /**
  * Created by sebastianblomberg on 2016-05-09.
  */
-public class CardChangeNotifier {
-    private final static long DEFAULT_POLL_INTERVAL = 2000;
+public class CardChangePoller {
 
-    private CardChangeListener listener;
-    private long pollInterval;
+    private List<CardChangeListener> listeners;
     private String boardIDToTrack;
     private TrelloImproved trelloAPI;
 
     private Map<String, Card> oldState;
-    private Handler handler = new Handler();
     private boolean isRunning = false;
 
-    public CardChangeNotifier(TrelloImproved trelloAPI, String boardIDToTrack, CardChangeListener listener) {
-        this(trelloAPI, boardIDToTrack, listener, DEFAULT_POLL_INTERVAL);
-    }
 
-    public CardChangeNotifier(TrelloImproved trelloAPI, String boardIDToTrack, CardChangeListener listener, long pollInterval) {
+    public CardChangePoller(TrelloImproved trelloAPI, String boardIDToTrack, List<CardChangeListener> listeners) {
         if(trelloAPI == null) {
             throw new NullPointerException("trelloAPI cannot not be null");
         }
         if(boardIDToTrack == null || boardIDToTrack.isEmpty()) {
             throw new NullPointerException("boardIDToTrack cannot not be null or empty");
         }
-        if(listener == null) {
-            throw new NullPointerException("listener cannot not be null");
+        if(listeners == null || listeners.isEmpty()) {
+            throw new NullPointerException("listeners cannot not be null or empty");
         }
-        if(pollInterval <= 0) {
-            throw new IllegalArgumentException("pollInterval cannot be negative or 0");
-        }
-        this.listener = listener;
+        this.listeners = listeners;
         this.boardIDToTrack = boardIDToTrack;
-        this.pollInterval = pollInterval;
         this.trelloAPI = trelloAPI;
     }
 
@@ -52,23 +42,16 @@ public class CardChangeNotifier {
         return isRunning;
     }
 
-    public void run() {
-        // Stop old fetcher if it is running
+    public boolean poll() {
         if(isRunning) {
-            stop();
-            // Give some time for the current task to finish
-            handler.postAtTime(cardFetcherTask, pollInterval);
-        } else {
-            handler.post(cardFetcherTask);
+            return false;
         }
         isRunning = true;
+        new Thread(cardFetcherTask).start();
 
+        return true;
     }
 
-    public void stop() {
-        isRunning = false;
-        handler.removeCallbacks(cardFetcherTask);
-    }
 
     private void compareAndNotifyOfChange(Map<String, Card> newState) {
         if(oldState == null) {
@@ -80,9 +63,9 @@ public class CardChangeNotifier {
             Card newCard = newState.get(oldCard.getId());
             if(newCard == null) {
                 // Card has been removed
-                listener.onCardChange(oldCard, null);
+                notifyChangeHelper(oldCard, null);
             } else if(!cardEquals(oldCard, newCard)) {
-                listener.onCardChange(oldCard, newCard);
+                notifyChangeHelper(oldCard, newCard);
             }
         }
 
@@ -92,9 +75,15 @@ public class CardChangeNotifier {
                 Card oldCard = newState.get(newCard.getId());
                 if(oldCard == null) {
                     // newCard has been added
-                    listener.onCardChange(null, newCard);
+                    notifyChangeHelper(null, newCard);
                 }
             }
+        }
+    }
+
+    private void notifyChangeHelper(Card oldCard, Card newCard) {
+        for(CardChangeListener l : listeners) {
+            l.onCardChange(oldCard, newCard);
         }
     }
 
@@ -120,9 +109,8 @@ public class CardChangeNotifier {
                 newState.put(c.getId(), c);
             }
             compareAndNotifyOfChange(newState);
-            if(isRunning) {
-                handler.postDelayed(cardFetcherTask, pollInterval);
-            }
+            isRunning = false;
+            oldState = newState;
         }
     };
 }

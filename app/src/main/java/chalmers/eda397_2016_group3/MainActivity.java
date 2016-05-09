@@ -3,6 +3,7 @@ package chalmers.eda397_2016_group3;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,9 +25,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import chalmers.eda397_2016_group3.trello.CardChangeNotifierService;
 import chalmers.eda397_2016_group3.trello.TasksFragment;
 import chalmers.eda397_2016_group3.timer.FragmentTimer;
 import chalmers.eda397_2016_group3.timer.MyTimer;
+import chalmers.eda397_2016_group3.trello.TrelloNotificationsFragment;
 import chalmers.eda397_2016_group3.trello.TrelloSetupFragment;
 
 
@@ -69,7 +72,12 @@ public class MainActivity extends AppCompatActivity {
             setupDrawerContent(navigationView);
         }
 
-        navigationView.getMenu().performIdentifierAction(R.id.navigation_trello, 0);
+
+        navigationView.getMenu().performIdentifierAction(
+                getIntent().getIntExtra("StartFragment", R.id.navigation_trello), 0);
+
+
+        startTrelloNotificatinService();
     }
 
     @Override
@@ -109,12 +117,15 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.navigation_trello_feature:
-
                 fragmentClass = TasksFragment.class;
                 break;
 
             case R.id.navigation_timer:
                 fragmentClass = FragmentTimer.class;
+                break;
+
+            case R.id.navigation_trello_notifications_fragment:
+                fragmentClass = TrelloNotificationsFragment.class;
                 break;
 
             default:
@@ -165,5 +176,10 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    private void startTrelloNotificatinService() {
+        Intent intent = new Intent(this, CardChangeNotifierService.class);
+        startService(intent);
+
+    }
 
 }

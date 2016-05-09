@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="chalmers.eda397_2016_group3">
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -17,7 +18,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".trello.PunchInActivity" />
-        <activity android:name=".trello.TrelloLoginActivity"></activity>
+        <activity android:name=".trello.TrelloLoginActivity" />
+
+        <service
+            android:name=".trello.CardChangeNotifierService"
+            android:exported="false"></service>
     </application>
 
 </manifest>
