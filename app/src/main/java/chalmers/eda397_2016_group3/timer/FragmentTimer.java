@@ -38,7 +38,6 @@ public class FragmentTimer extends Fragment {
     private int totalTimeSeconds;
     //private MyTimer timer = new MyTimer(new Handler());
      TextView txtNavi;
-     TextView txtDriv;
 
 
     @Override
@@ -57,8 +56,8 @@ public class FragmentTimer extends Fragment {
         super.onStart();
         final Button btnStart = (Button) getView().findViewById(R.id.btnStart);
         final Button btnRest = (Button) getView().findViewById(R.id.btnReset);
-        txtNavi= (TextView) getView().findViewById(R.id.navigatorText);
-         txtDriv = (TextView) getView().findViewById(R.id.driverText);
+        txtNavi= (TextView) getView().findViewById(R.id.partnerText);
+
         final Spinner SpinnerHour = (Spinner) getView().findViewById(R.id.hourSpinner);
         final Spinner SpinnerMinute = (Spinner) getView().findViewById(R.id.MinuteSpinner);
         final Spinner SpinnerSecond = (Spinner) getView().findViewById(R.id.SecondSpinner);
@@ -202,7 +201,6 @@ public class FragmentTimer extends Fragment {
         StringTokenizer st = new StringTokenizer(pair);
         txtNavi.setText("Partner: "+st.nextToken(":"));
       //  txtDriv.setText("Driver: "+st.nextToken(":"));
-        txtDriv.setText("");
 
     }
     private void getBoardsHelper() {
