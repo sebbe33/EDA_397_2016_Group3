@@ -7,13 +7,34 @@
     android:orientation="vertical">
 
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Selected List"
+        android:id="@+id/listName"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginLeft="20dp"
+        android:layout_alignParentStart="true" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:layout_below="@+id/listName"
+        android:id="@+id/list_spinner"
+        android:layout_weight="0.10" />
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
-        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginTop="16dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
+        android:layout_below="@+id/list_spinner"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
 
 
 
