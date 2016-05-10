@@ -77,6 +77,8 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
         // Get boards
         new FetchBoards().execute(trelloAPI);
 
+
+
         Button loginButton = (Button) getView().findViewById(R.id.trello_login_button);
         loginButton.setText(getResources().getString(R.string.TRELLO_LOGIN_BUTTON_AUTHENTICATED));
     }

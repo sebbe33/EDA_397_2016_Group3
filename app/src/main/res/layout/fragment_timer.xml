@@ -21,7 +21,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="142dp"
             android:orientation="horizontal"
             android:gravity="center_horizontal"
             android:layout_marginTop="10dp"
@@ -31,6 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:textSize="20dp"
                 android:text="Set Time"/>
 
             <Spinner
@@ -38,13 +39,15 @@
                 android:layout_height="match_parent"
                 android:id="@+id/hourSpinner"
                 android:spinnerMode="dropdown"
+                android:textSize="20dp"
                 android:entries="@array/Hours"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text=":"
+                android:text="@string/time_separator"
+                android:textSize="20dp"
                 android:id="@+id/textView1" />
 
             <Spinner
@@ -52,13 +55,15 @@
                 android:layout_height="match_parent"
                 android:id="@+id/MinuteSpinner"
                 android:spinnerMode="dropdown"
+                android:textSize="20dp"
                 android:entries="@array/Minutes"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text=":"
+                android:text="@string/time_separator"
+                android:textSize="20dp"
                 android:id="@+id/textView" />
 
             <Spinner
@@ -66,10 +71,33 @@
                 android:layout_height="match_parent"
                 android:id="@+id/SecondSpinner"
                 android:spinnerMode="dropdown"
+                android:textSize="20dp"
                 android:entries="@array/Seconds" />
 
         </LinearLayout>
 
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:foregroundGravity="center"
+            android:gravity="center_vertical|center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Medium Text"
+                android:id="@+id/navigatorText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Medium Text"
+                android:id="@+id/driverText" />
+        </LinearLayout>
 
         <TextView android:id="@+id/tv_timer"
             android:layout_width="775px"
@@ -100,5 +128,6 @@
                 android:layout_weight="1"
                 android:text="Reset" />
         </LinearLayout>
+
     </LinearLayout>
 </RelativeLayout>

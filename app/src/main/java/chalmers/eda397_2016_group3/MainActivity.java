@@ -138,6 +138,8 @@ public class MainActivity extends AppCompatActivity {
         mDrawerLayout.closeDrawers();
     }
 
+
+
     @Override
     protected void onResume() {
         super.onResume();
