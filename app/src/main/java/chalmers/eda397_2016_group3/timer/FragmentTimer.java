@@ -57,10 +57,8 @@ public class FragmentTimer extends Fragment {
         super.onStart();
         final Button btnStart = (Button) getView().findViewById(R.id.btnStart);
         final Button btnRest = (Button) getView().findViewById(R.id.btnReset);
-
         txtNavi= (TextView) getView().findViewById(R.id.navigatorText);
          txtDriv = (TextView) getView().findViewById(R.id.driverText);
-
         final Spinner SpinnerHour = (Spinner) getView().findViewById(R.id.hourSpinner);
         final Spinner SpinnerMinute = (Spinner) getView().findViewById(R.id.MinuteSpinner);
         final Spinner SpinnerSecond = (Spinner) getView().findViewById(R.id.SecondSpinner);
@@ -92,6 +90,7 @@ public class FragmentTimer extends Fragment {
                     SpinnerHour.setEnabled(true);
                     SpinnerMinute.setEnabled(true);
                     SpinnerSecond.setEnabled(true);
+                    btnRest.setEnabled(true);
                 }
             }
         });
@@ -148,7 +147,9 @@ public class FragmentTimer extends Fragment {
                     timer.stop();
                 tv_timer.setText(null);
                 btnStart.setText("Start");
-//                mNotifyMgr.cancel(R.integer.notification_timer);
+
+               // mNotifyMgr.cancel(R.integer.notification_timer);
+
                 SpinnerHour.setEnabled(true);
                 SpinnerHour.setSelection(0);
                 SpinnerMinute.setEnabled(true);

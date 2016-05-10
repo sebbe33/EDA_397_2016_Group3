@@ -160,7 +160,7 @@
     </string-array>
 
     <string name="TRELLO_API_KEY">1d303eb6413db706b3f41136d51e8a51</string>
-    <string name="TRELLO_AUTHENTICATION_EXPIRATION">1hour</string>
+    <string name="TRELLO_AUTHENTICATION_EXPIRATION">never</string>
     <string name="TRELLO_TOKEN_KEY">TRELLO_TOKEN_KEY</string>
 
 

@@ -20,10 +20,7 @@
     <color name="colorPrimary">#C62828</color>
     <color name="colorPrimaryDark">#B71C1C</color>
     <color name="colorAccent">#FFA726</color>
-
-  <color name="fab_background">#FF6600</color>
-  <color name="fab_background_fav">#D32F2F</color>
-  <color name="image_background">#F8CC32</color>
-
-
+    <color name="fab_background_out">#FF6600</color>
+    <color name="fab_background_in">#D32F2F</color>
+    <color name="image_background">#F8CC32</color>
 </resources>
