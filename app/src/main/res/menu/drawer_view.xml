@@ -36,6 +36,7 @@
             android:title="GitHub" />
         <item
             android:id="@+id/navigation_timer"
+            android:icon="@drawable/ic_timer"
             android:title="Timer"/>
     </group>
 </menu>

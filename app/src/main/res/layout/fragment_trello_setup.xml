@@ -61,7 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="statistics:"
+            android:text="Statistics:"
             android:id="@+id/statisticsTxt"
             android:singleLine="true" />
 
@@ -71,7 +71,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="8dp"
-            app:egLegendTextSize="12sp"
+            android:layout_marginTop="10dp"
+            app:egLegendTextSize="10sp"
             app:egUsePieRotation="true"
             app:egValueTextSize="36sp"/>
 

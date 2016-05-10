@@ -107,28 +107,11 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
         if(spinnerOptions != null) {
             Log.d("debug", "Selected: " + spinnerOptions.get(position).getValue());
             TrelloAppService.setSelectedBoardID(spinnerOptions.get(position).getKey(), getActivity());
-
-            //TODO setup up chart
-
-
-
-
-            // Get all card
-
-        /*    PieChart mPieChart = (PieChart) getView().findViewById(R.id.piechart);
-            mPieChart.addPieSlice(new PieModel("Freetime", 15, Color.parseColor("#FE6DA8")));
-            mPieChart.addPieSlice(new PieModel("Sleep", 25, Color.parseColor("#56B7F1")));
-            mPieChart.addPieSlice(new PieModel("Work", 35, Color.parseColor("#CDA67F")));
-            mPieChart.addPieSlice(new PieModel("Eating", 9, Color.parseColor("#FED70E")));
-
-
-            mPieChart.startAnimation();
-            */
-
         }
     }
 
     private void setUpPieChart(List<Card> result){
+        mPieChart.clearChart();
         CardDescriptorImpl cardDescriptorImpl ;
         Random random = new Random();
         for(Card card:result){
@@ -138,7 +121,6 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
                     String.format("#%06x", random.nextInt(256*256*256))
             )));
         }
-
         mPieChart.startAnimation();
     }
 
@@ -185,7 +167,6 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
                 }
                 i++;
             }
-
             setUpBoardSpinner(spinnerOptions, selectedIndex);
         }
     }
@@ -200,42 +181,21 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
         @Override
         protected List<Card> doInBackground(String... params) {
             String board = params[0];
-
-
             List<Card> card=trelloAPI.getCardsByMember("me");
             List<Card> cardsByBoard=trelloAPI.getCardsByBoard(board);
-
-            Log.d("debugcard", "zxz"+card.size());
-            Log.d("debugcard", "zxz"+cardsByBoard.size());
-           List<Card> common = new ArrayList<Card>();
-
-
-            common.retainAll(cardsByBoard);
-
-            Log.d("debugcard", "zxz"+common.size());
-
+            List<Card> common = new ArrayList<Card>();
             for(int i =0; i<card.size();i++) {
                 for(int j = 0;j<cardsByBoard.size();j++){
                     if(card.get(i).getName().equals(cardsByBoard.get(j).getName()))
                         common.add(card.get(i));
                 }
             }
-            Log.d("debugcard", "size of common: " + common.size());
             return common;
-
-
-
         }
 
         @Override
         protected void onPostExecute(List<Card> result) {
-
-
             setUpPieChart(result);
-
-
-
-       //     mRecyclerView.setAdapter(new TaskListItemAdapter(result, TasksFragment.this));
         }
     }
 }
