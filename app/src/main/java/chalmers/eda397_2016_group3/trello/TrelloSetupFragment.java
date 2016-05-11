@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import org.eazegraph.lib.charts.PieChart;
 import org.eazegraph.lib.models.PieModel;
@@ -32,6 +33,7 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
     private Trello trelloAPI = null;
     private List<AdapterTuple<String,String>> spinnerOptions = null;
     PieChart mPieChart ;
+    private TextView statisticsTxt;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,7 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
     public void onStart () {
         super.onStart();
         trelloApp = TrelloAppService.getTrelloApp(getActivity());
+        statisticsTxt = (TextView) getView().findViewById(R.id.statisticsTxt);
 
         Button loginButton = (Button) getView().findViewById(R.id.trello_login_button);
         mPieChart = (PieChart) getView().findViewById(R.id.piechart);
@@ -83,7 +86,6 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
         trelloAPI = TrelloAppService.getTrelloAPIInterface(trelloApp);
         // Get boards
         new FetchBoards().execute(trelloAPI);
-        new CardFetcher(trelloAPI).execute(trelloApp.getSelectedBoardID());
 
 
 
@@ -99,7 +101,10 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
         spinner.setAdapter(spinnerArrayAdapter);
         if(selectedIntex != null && selectedIntex < options.size()) {
             spinner.setSelection(selectedIntex);
+            new CardFetcher(trelloAPI).execute(trelloApp.getSelectedBoardID());
+
         }
+
     }
 
     @Override
@@ -114,13 +119,17 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
         mPieChart.clearChart();
         CardDescriptorImpl cardDescriptorImpl ;
         Random random = new Random();
+        int totalSpendHours = 0;
         for(Card card:result){
             cardDescriptorImpl  = new CardDescriptorImpl(card);
             Log.d("cardDescriptorImpl",""+cardDescriptorImpl.getTimeSpent());
             mPieChart.addPieSlice(new PieModel(card.getName(), cardDescriptorImpl.getTimeSpent().getHours(), Color.parseColor(
                     String.format("#%06x", random.nextInt(256*256*256))
             )));
+            totalSpendHours+=cardDescriptorImpl.getTimeSpent().getHours();
         }
+
+        statisticsTxt.setText("Total spend time: "+totalSpendHours+" Hours");
         mPieChart.startAnimation();
     }
 
