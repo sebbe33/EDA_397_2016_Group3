@@ -23,4 +23,7 @@
     <color name="fab_background_out">#FF6600</color>
     <color name="fab_background_in">#D32F2F</color>
     <color name="image_background">#F8CC32</color>
+
+    <color name="gray_background">#757575</color>
+    <color name="yellow">#FFBB33</color>
 </resources>

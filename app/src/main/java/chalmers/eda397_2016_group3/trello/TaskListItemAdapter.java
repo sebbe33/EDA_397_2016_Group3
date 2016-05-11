@@ -2,6 +2,7 @@ package chalmers.eda397_2016_group3.trello;
 
 import android.support.v7.internal.widget.AdapterViewCompat;
 import android.support.v7.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,8 +48,9 @@ public class TaskListItemAdapter extends RecyclerView.Adapter<TaskListItemAdapte
 
     @Override
     public void onBindViewHolder(TaskListItemAdapter.ViewHolder holder, int position) {
-        TextView textView = (TextView)holder.mTextView.findViewById(R.id.sub_card);
+        TextView textView = (TextView)holder.mTextView.findViewById(R.id.feature_description);
         textView.setText(cards.get(position).getName());
+
         holder.mTextView.setOnClickListener(new OnClickListenerWrapper(cards.get(position), onClickListener));
     }
 

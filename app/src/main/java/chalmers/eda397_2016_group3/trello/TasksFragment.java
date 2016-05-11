@@ -5,17 +5,27 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.internal.widget.AdapterViewCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.trello4j.Trello;
 import org.trello4j.model.Card;
 
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import chalmers.eda397_2016_group3.R;
 import chalmers.eda397_2016_group3.adapter.GridAdapter;
@@ -34,6 +44,15 @@ public class TasksFragment extends Fragment implements TaskListItemAdapter.OnCar
 
     private List<AdapterTuple<String,String>> listItems = null;
 
+    private List<org.trello4j.model.List> listNames=null;
+    private List<String> list=null;
+    private List<String> listId=null;
+    private Spinner spinnerWidget;
+    private Bundle savedState = null;
+    Map mapList = new HashMap();
+    private ViewGroup viewGroup=null;
+    private int selectedIndex=-1;
+
     public static Fragment newInstance(Context context) {
         TasksFragment f = new TasksFragment();
         return f;
@@ -43,6 +62,7 @@ public class TasksFragment extends Fragment implements TaskListItemAdapter.OnCar
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_feature, null);
 
+        viewGroup=root;
         Context c=getActivity();
         mRecyclerView = (RecyclerView)root.findViewById(R.id.recyclerview);
         mRecyclerView.setHasFixedSize(true);
@@ -55,17 +75,11 @@ public class TasksFragment extends Fragment implements TaskListItemAdapter.OnCar
         List<String> list=new ArrayList<String>();
         list.add("A user want to be able to synchronise with the trello project");
         list.add("As a navigator I want to able to set a timer");
-        list.add("As a user I want to able to pause the timer");
-        list.add("A user want to be able to synchronise with the trello project");
-        list.add("As a navigator I want to able to set a timer");
-        list.add("As a user I want to able to pause the timer");
-        list.add("A user want to be able to synchronise with the trello project");
-        list.add("As a navigator I want to able to set a timer");
-        list.add("As a user I want to able to pause the timer");
 
 
-        mAdapter = new GridAdapter(list);
+       /* mAdapter = new GridAdapter(list);
         mRecyclerView.setAdapter(mAdapter);
+       */
         return root;
     }
 
@@ -75,9 +89,21 @@ public class TasksFragment extends Fragment implements TaskListItemAdapter.OnCar
         trelloApp = TrelloAppService.getTrelloApp(getActivity());
         trelloAPI = TrelloAppService.getTrelloAPIInterface(trelloApp);
 
+
         if(trelloApp.isAuthenticated()) {
-            fetchTasks();
+            fetchList();
+            if(mapList!=null){
+
+
+            }
+
         }
+        else
+        {
+            Toast.makeText(getActivity(),"Please wait",Toast.LENGTH_SHORT).show();
+        }
+
+
 
     }
 
@@ -96,8 +122,24 @@ public class TasksFragment extends Fragment implements TaskListItemAdapter.OnCar
         super.onDestroy();
     }
 
-    private void fetchTasks() {
-        new CardFetcher(trelloAPI).execute(trelloApp.getSelectedBoardID());
+    private void fetchList() {
+
+        new ListFetcher(trelloAPI).execute(trelloApp.getSelectedBoardID());
+
+
+
+        if(listNames==null){
+
+            Toast.makeText(getActivity(),"Please wait",Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
+
+    private void fetchTasks(String listId) {
+
+        new CardFetcher(trelloAPI).execute(listId);
     }
 
     @Override
@@ -105,6 +147,7 @@ public class TasksFragment extends Fragment implements TaskListItemAdapter.OnCar
         // A card got clicked, time to start a new intent with the card send along in a bundle.
         Bundle bundle = new Bundle();
         bundle.putString(TrelloAppService.TRELLO_CARD_ID, c.getId());
+
         Intent intent = new Intent(getActivity(), PunchInActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -120,13 +163,72 @@ public class TasksFragment extends Fragment implements TaskListItemAdapter.OnCar
         @Override
         protected List<Card> doInBackground(String... params) {
             String board = params[0];
-            return trelloAPI.getCardsByBoard(board);
+
+            return trelloAPI.getCardsByList(board);
         }
 
         @Override
         protected void onPostExecute(List<Card> result) {
+
+
+
             mRecyclerView.setAdapter(new TaskListItemAdapter(result, TasksFragment.this));
         }
     }
+
+    private class ListFetcher extends AsyncTask<String, Integer, List<org.trello4j.model.List>> {
+        private final Trello trelloAPI;
+
+        public ListFetcher(Trello trelloAPI) {
+            this.trelloAPI = trelloAPI;
+        }
+
+        @Override
+        protected List<org.trello4j.model.List> doInBackground(String... params) {
+            String board = params[0];
+
+            return trelloAPI.getListByBoard(board);
+        }
+
+        @Override
+        protected void onPostExecute(List<org.trello4j.model.List> result) {
+
+
+            for (org.trello4j.model.List listObject : result) {
+
+                mapList.put(listObject.getId(), listObject.getName());
+                Log.d("debugn10list",""+listObject.getId());
+            }
+            list=new ArrayList<>(mapList.values());
+            listId=new ArrayList<>(mapList.keySet());
+
+            spinnerWidget= (Spinner) getView().findViewById(R.id.list_spinner);
+            ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,list);
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            spinnerWidget.setAdapter(arrayAdapter);
+            if(selectedIndex>-1){
+                spinnerWidget.setSelection(selectedIndex);
+            }
+
+            spinnerWidget.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                    // your code here
+
+                    selectedIndex=position;
+                    fetchTasks(listId.get(position));
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parentView) {
+                    // your code here
+                }
+            });
+
+            listNames = result;
+        }
+    }
+
+
 
 }
