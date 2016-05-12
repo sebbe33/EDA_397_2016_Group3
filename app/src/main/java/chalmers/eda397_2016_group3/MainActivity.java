@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.android.gms.appindexing.AppIndex;
@@ -23,6 +24,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import chalmers.eda397_2016_group3.trello.CardChangeNotifierService;
@@ -34,6 +36,8 @@ import chalmers.eda397_2016_group3.trello.TrelloSetupFragment;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final String INTENT_EXTRA_FRAGMENT_NAME = "fragmentName";
 
     private DrawerLayout mDrawerLayout;
 
@@ -72,12 +76,19 @@ public class MainActivity extends AppCompatActivity {
             setupDrawerContent(navigationView);
         }
 
-
         navigationView.getMenu().performIdentifierAction(
                 getIntent().getIntExtra("StartFragment", R.id.navigation_trello), 0);
 
 
         startTrelloNotificatinService();
+        // If the intent was to bring up the timer, replace the content fragment with FragmentTimer.
+        String fragmentName = getIntent().getStringExtra(INTENT_EXTRA_FRAGMENT_NAME);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentName != null && fragmentName.equals(FragmentTimer.class.getSimpleName()))
+            navigationView.getMenu().performIdentifierAction(R.id.navigation_timer, 0);
+        else
+            navigationView.getMenu().performIdentifierAction(R.id.navigation_trello, 0);
+
     }
 
     @Override
@@ -101,8 +112,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
+
     public void selectDrawerItem(MenuItem menuItem) {
-        // Create a new fragment position
 
         Fragment fragment = null;
         Class fragmentClass;
