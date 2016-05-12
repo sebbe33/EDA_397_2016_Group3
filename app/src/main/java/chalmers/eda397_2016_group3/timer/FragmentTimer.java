@@ -6,10 +6,12 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,7 +81,7 @@ public class FragmentTimer extends Fragment {
         mNotifyMgr = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
         final NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(getActivity().getApplicationContext())
-                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setSmallIcon(R.mipmap.ic_launcher_2)
                         .setContentTitle("Timer")
                         .setContentIntent(PendingIntent.getActivity(getActivity(), 0, intent, 0))
                         .setAutoCancel(true);
@@ -119,7 +121,7 @@ public class FragmentTimer extends Fragment {
                     btnRest.setEnabled(true);
                 }
             }
-        });
+        }});
 
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
