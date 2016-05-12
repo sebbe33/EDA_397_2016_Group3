@@ -311,6 +311,7 @@ public class VerticalBarChart extends BaseBarChart {
 
         Utils.calculateLegendInformation(mData, 0, mContentRect.width(), mLegendPaint);
         mMaxFontHeight = Utils.calculateMaxTextHeight(mValuePaint, "190");
+
     }
 
 
