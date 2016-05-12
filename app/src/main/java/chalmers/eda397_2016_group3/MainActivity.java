@@ -123,10 +123,10 @@ public class MainActivity extends AppCompatActivity {
                 fragmentClass = TrelloSetupFragment.class;
                 break;
 
-            case R.id.navigation_github:
+  /*          case R.id.navigation_github:
                 fragmentClass = FragmentGithub.class;
                 break;
-
+*/
             case R.id.navigation_trello_feature:
                 fragmentClass = TasksFragment.class;
                 break;
