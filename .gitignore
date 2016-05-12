@@ -1,6 +1,7 @@
 
 # Created by https://www.gitignore.io/api/android
 
+.DS_Store
 ### Android ###
 # Built application files
 *.apk
@@ -46,6 +47,7 @@ captures/
 gen-external-apklibs
 
 # User-specific stuff:
+.idea/
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/dictionaries
