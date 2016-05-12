@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -252,6 +253,15 @@ public class FragmentTimer extends Fragment {
             TrelloApp trelloApp = TrelloAppService.getTrelloApp(getActivity());
             Trello trelloAPI = TrelloAppService.getTrelloAPIInterface(trelloApp);
             List<Member> members = trelloAPI.getMembersByBoard(trelloApp.getSelectedBoardID());
+            String myName = trelloAPI.getMember("me").getFullName();
+            Member myself =null;
+            for(Member member : members ){
+                if(member.getFullName().equals(myName)){
+                    myself = member;
+                    Log.d("Removed my self",""+trelloAPI.getMember("me").getUsername());
+                }
+            }
+            members.remove(myself);
 
             return  members;
         }
