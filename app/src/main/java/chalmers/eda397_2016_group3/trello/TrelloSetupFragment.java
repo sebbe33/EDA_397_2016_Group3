@@ -123,7 +123,8 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
         for(Card card:result){
             cardDescriptorImpl  = new CardDescriptorImpl(card);
             Log.d("cardDescriptorImpl",""+cardDescriptorImpl.getTimeSpent());
-            mPieChart.addPieSlice(new PieModel(card.getName(), cardDescriptorImpl.getTimeSpent().getHours(), Color.parseColor(
+
+            mPieChart.addPieSlice(new PieModel(ellipsize(card.getName(),60), cardDescriptorImpl.getTimeSpent().getHours(), Color.parseColor(
                     String.format("#%06x", random.nextInt(256*256*256))
             )));
             totalSpendHours+=cardDescriptorImpl.getTimeSpent().getHours();
@@ -206,5 +207,15 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
         protected void onPostExecute(List<Card> result) {
             setUpPieChart(result);
         }
+    }
+
+
+    String ellipsize(String input, int maxLength) {
+        String ellip = "...";
+        if (input == null || input.length() <= maxLength
+                || input.length() < ellip.length()) {
+            return input;
+        }
+        return input.substring(0, maxLength - ellip.length()).concat(ellip).concat(input.substring(input.length()-4,input.length()));
     }
 }
