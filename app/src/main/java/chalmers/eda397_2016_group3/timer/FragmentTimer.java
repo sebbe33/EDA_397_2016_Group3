@@ -2,12 +2,16 @@ package chalmers.eda397_2016_group3.timer;
 
 import android.app.AlertDialog;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +44,7 @@ public class FragmentTimer extends Fragment {
      TextView txtNavi;
 
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +75,16 @@ public class FragmentTimer extends Fragment {
             Toast.makeText(getActivity(),"Please login first",Toast.LENGTH_SHORT).show();
 
         }
+        // Notification
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        intent.putExtra(MainActivity.INTENT_EXTRA_FRAGMENT_NAME, FragmentTimer.class.getSimpleName());
+        mNotifyMgr = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        final NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(getActivity().getApplicationContext())
+                        .setSmallIcon(R.mipmap.ic_launcher_2)
+                        .setContentTitle("Timer")
+                        .setContentIntent(PendingIntent.getActivity(getActivity(), 0, intent, 0))
+                        .setAutoCancel(true);
 
 
         // Timer stuff
@@ -80,10 +95,24 @@ public class FragmentTimer extends Fragment {
             @Override
             public void onTick(long totalElapsedMillis) {
                 long millisLeft = Math.max(0, totalTimeSeconds * 1000 - totalElapsedMillis);
+                // Fix for when the timer lags by even a millisecond (4999ms / 1000 = 4s)
+                millisLeft = (long) (1000 * Math.rint(millisLeft / 1000d));
                 String time = formatTime(timerFormat, millisLeft);
                 tv_timer.setText(time);
                 if (millisLeft == 0) {
                     timer.stop();
+
+                notificationBuilder.setContentText(time);
+                mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
+                // If the current time over the time user set.
+                if (millisLeft == 0) {
+                    timer.stop();
+                    // Notify the user
+                    notificationBuilder.setContentText("Time is up!");
+                    notificationBuilder.setSound(Uri.parse("android.resource://"
+                            + getActivity().getApplicationContext().getPackageName() + "/" + R.raw.cat));
+                    mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
+                    notificationBuilder.setSound(null);
                     btnStart.setText("Start");
                     showDialog("Time is up!");
                     SpinnerHour.setEnabled(true);
@@ -92,7 +121,7 @@ public class FragmentTimer extends Fragment {
                     btnRest.setEnabled(true);
                 }
             }
-        });
+        }});
 
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,10 +138,16 @@ public class FragmentTimer extends Fragment {
                     }else {
 
                         // Start counting
-                        timer.start(1);
+                        timer.start(1000);
                         btnStart.setText("Pause");
                     //    String time = formatTime(timerFormat, totalTimeSeconds * 1000);
                      //   tv_timer.setText(time);
+
+                        String time = formatTime(timerFormat, totalTimeSeconds * 1000);
+                        tv_timer.setText(time);
+                        // Notification
+                        notificationBuilder.setContentText(time);
+                        mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
 
                         SpinnerHour.setEnabled(false);
                         SpinnerMinute.setEnabled(false);
@@ -126,8 +161,8 @@ public class FragmentTimer extends Fragment {
                     btnStart.setText("Resume");
                     btnRest.setEnabled(true);
                     // Notification
-                    //notificationBuilder.setContentText("Paused");
-                   // mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
+                    notificationBuilder.setContentText("Paused");
+                    mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
                 } else {
                     //resume the timer
                     timer.resume();
@@ -148,6 +183,9 @@ public class FragmentTimer extends Fragment {
                 btnStart.setText("Start");
 
                // mNotifyMgr.cancel(R.integer.notification_timer);
+
+
+                mNotifyMgr.cancel(R.integer.notification_timer);
 
                 SpinnerHour.setEnabled(true);
                 SpinnerHour.setSelection(0);
@@ -182,8 +220,6 @@ public class FragmentTimer extends Fragment {
 
     protected void showDialog(String text) {
 
-        Intent startIntent = new Intent(getActivity(), MainActivity.class);
-        getActivity().startActivity(startIntent);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         builder.setTitle("Timer").setMessage(text)
@@ -195,6 +231,7 @@ public class FragmentTimer extends Fragment {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+
     }
 
     private void setPair(String pair){
@@ -229,6 +266,7 @@ public class FragmentTimer extends Fragment {
             setPair(pairs.getRandomPair());
         }
     }
+
 }
 
 
