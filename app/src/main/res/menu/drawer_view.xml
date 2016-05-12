@@ -30,7 +30,10 @@
             android:id="@+id/navigation_trello_notifications_fragment"
             android:icon="@drawable/trello_ic"
             android:title="Trello Notifications" />
-
+        <item
+            android:id="@+id/navigation_github"
+            android:icon="@drawable/github_ic"
+            android:title="GitHub" />
         <item
             android:id="@+id/navigation_timer"
             android:icon="@drawable/ic_timer"

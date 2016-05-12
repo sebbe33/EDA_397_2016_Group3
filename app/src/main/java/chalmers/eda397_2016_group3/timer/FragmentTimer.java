@@ -23,7 +23,6 @@ import android.widget.Toast;
 
 import org.trello4j.Trello;
 import org.trello4j.model.Member;
-import org.w3c.dom.Text;
 
 import java.util.List;
 import java.util.Locale;
@@ -44,7 +43,6 @@ public class FragmentTimer extends Fragment {
     private int totalTimeSeconds;
     //private MyTimer timer = new MyTimer(new Handler());
      TextView txtNavi;
-    private TextView myNameTxt;
 
 
 
@@ -69,7 +67,6 @@ public class FragmentTimer extends Fragment {
         final Spinner SpinnerHour = (Spinner) getView().findViewById(R.id.hourSpinner);
         final Spinner SpinnerMinute = (Spinner) getView().findViewById(R.id.MinuteSpinner);
         final Spinner SpinnerSecond = (Spinner) getView().findViewById(R.id.SecondSpinner);
-        myNameTxt = (TextView) getView().findViewById(R.id.myNameTxt);
 
         trelloApp = TrelloAppService.getTrelloApp(getActivity());
 
@@ -240,17 +237,15 @@ public class FragmentTimer extends Fragment {
 
     private void setPair(String pair){
         StringTokenizer st = new StringTokenizer(pair);
-        txtNavi.setText(st.nextToken(":"));
+        txtNavi.setText("Partner: "+st.nextToken(":"));
       //  txtDriv.setText("Driver: "+st.nextToken(":"));
-    }
-    private void setMyName(String pair){
-        myNameTxt.setText(pair);
+
     }
     private void getBoardsHelper() {
         trelloAPI = TrelloAppService.getTrelloAPIInterface(trelloApp);
         // Get boards
         new FetchBoards().execute(trelloAPI);
-     }
+  }
     private class FetchBoards extends AsyncTask<Trello, Integer, List<Member>> {
 
         @Override
@@ -267,19 +262,18 @@ public class FragmentTimer extends Fragment {
                 }
             }
             members.remove(myself);
-            members.add(myself);
+
             return  members;
         }
 
         @Override
         protected void onPostExecute(List<Member> result) {
             Pairs pairs = new Pairs();
-            for (int j = 0; j<result.size()-1;j++){
+            for (int j = 0; j<result.size();j++){
                 pairs.addPair(result.get(j).getFullName());
+
             }
-            String myName = result.get(result.size()-1).getFullName();
             setPair(pairs.getRandomPair());
-            setMyName(myName);
         }
     }
 
