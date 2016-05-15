@@ -6,7 +6,7 @@ import android.support.v4.app.Fragment;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +23,8 @@ import com.hudomju.swipe.SwipeToDismissTouchListener;
 import com.hudomju.swipe.SwipeableItemClickListener;
 import com.hudomju.swipe.adapter.RecyclerViewAdapter;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,10 +33,11 @@ import static android.widget.Toast.LENGTH_SHORT;
 /**
  * Created by N10 on 4/19/2016.
  */
-public class FragmentGithub extends Fragment {
+public class DefinitionOfDone extends Fragment {
 
 
     ArrayList<String> list = new ArrayList<String>();
+    TextView tv;
 
     public  List<String> lDataSet=null;
     EditText edit=null;
@@ -56,10 +59,12 @@ public class FragmentGithub extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.definition_of_done, null);
 
-        Log.d("debugeditn10","view");
+
 
         final EditText edit=(EditText)root.findViewById(R.id.txtItem);
         Button btn = (Button) root.findViewById(R.id.btnAdd);
+
+
 
 
         init((RecyclerView) root.findViewById(R.id.recycler_view));
@@ -67,11 +72,15 @@ public class FragmentGithub extends Fragment {
             @Override
             public void onClick(View v) {
 
+                String strUserName=edit.getText().toString();
+                if (TextUtils.isEmpty(strUserName) || strUserName.trim().length() == 0) {
+                    edit.setError("Cannot add empty item");
+
+                }
+                else
                 list.add(edit.getText().toString());
                 adapter.updateList(list);
                 adapter.notifyDataSetChanged();
-                Log.d("debugeditn10", "asd");
-
             }
         });
 
@@ -83,7 +92,7 @@ public class FragmentGithub extends Fragment {
     private void init(RecyclerView recyclerView) {
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
-         adapter = new MyBaseAdapter(list);
+        adapter = new MyBaseAdapter(list);
 
         recyclerView.setAdapter(adapter);
         final SwipeToDismissTouchListener<RecyclerViewAdapter> touchListener =
@@ -163,6 +172,8 @@ public class FragmentGithub extends Fragment {
         public void remove(int position) {
             mDataSet.remove(position);
             notifyItemRemoved(position);
+
+
         }
 
 

@@ -33,7 +33,7 @@
         <item
             android:id="@+id/navigation_github"
             android:icon="@drawable/github_ic"
-            android:title="GitHub" />
+            android:title="Checklist" />
         <item
             android:id="@+id/navigation_timer"
             android:icon="@drawable/ic_timer"

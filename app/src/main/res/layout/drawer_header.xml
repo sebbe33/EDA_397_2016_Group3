@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="198dp"
+    android:background="@drawable/ic_nav_background"
+    android:gravity="bottom"
+    android:padding="16dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/profile_image"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/ic_profile"
+        app:civ_border_color="#ffffff"
+        app:civ_border_width="2dp"/>
+
+    <TextView
+        android:id="@+id/initialsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/profile_image"
+        android:layout_alignTop="@+id/profile_image"
+        android:layout_alignRight="@+id/profile_image"
+        android:layout_alignBottom="@+id/profile_image"
+        android:textColor="@color/initialsText_color"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:textSize="30sp"
+        android:text="HI"
+    android:gravity="center"/>
+
+
+
+
+    <TextView
+        android:id="@+id/userName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profile_image"
+        android:text="Pawan Deshpande"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textStyle="bold" />
+
+</RelativeLayout>

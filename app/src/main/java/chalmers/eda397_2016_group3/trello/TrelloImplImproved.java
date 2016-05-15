@@ -1193,7 +1193,7 @@ public class TrelloImplImproved implements TrelloImproved {
             }
 
             if (conn.getResponseCode() > 399) {
-                Log.e("trello", "Error on request. Code: " + conn.getResponseCode());
+                Log.e("debug", "Error on request. Code: " + conn.getResponseCode());
                 return null;
             } else {
                 return getWrappedInputStream(

@@ -1,0 +1,61 @@
+<?xml version = "1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/apk/tools"
+
+    android:id="@+id/checklist"
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:gravity="center_horizontal">
+
+    <EditText
+        android:id="@+id/txtItem"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:inputType="text"
+        android:hint="@string/hintTxtItem"
+        />
+
+    <Button
+        android:id="@+id/btnAdd"
+        android:paddingTop="20dp"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/lblBtnAdd"
+        android:layout_toRightOf="@id/txtItem"
+        />
+
+    <TextView
+        android:id="@+id/defintionOfDone"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/txtItem"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done items:"/>
+
+     <View
+         android:layout_below="@+id/defintionOfDone"
+         android:layout_marginTop="3dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#d3d3d3" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_marginTop="50dp"
+        android:layout_below="@+id/defintionOfDone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/recycler_view"/>
+
+
+
+
+
+
+</RelativeLayout>
