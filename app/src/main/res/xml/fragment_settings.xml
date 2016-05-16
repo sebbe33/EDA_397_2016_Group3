@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <PreferenceCategory
+        android:title="Notification settings">
+
+        <CheckBoxPreference
+            android:key="checkBoxTimer"
+            android:title="Timer notification"
+            android:summary="Turn on timer notification"/>
+
+        <CheckBoxPreference
+            android:key="checkBoxTrello"
+            android:title="Trello notification"
+            android:summary="Turn on Trello notification"/>
+
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

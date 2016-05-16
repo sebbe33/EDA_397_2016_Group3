@@ -33,6 +33,7 @@ import chalmers.eda397_2016_group3.timer.FragmentTimer;
 import chalmers.eda397_2016_group3.timer.MyTimer;
 import chalmers.eda397_2016_group3.trello.TrelloNotificationsFragment;
 import chalmers.eda397_2016_group3.trello.TrelloSetupFragment;
+import chalmers.eda397_2016_group3.utils.SettingsFragment;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -137,6 +138,10 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.navigation_trello_notifications_fragment:
                 fragmentClass = TrelloNotificationsFragment.class;
+                break;
+
+            case R.id.navigation_settings:
+                fragmentClass = SettingsFragment.class;
                 break;
 
             default:

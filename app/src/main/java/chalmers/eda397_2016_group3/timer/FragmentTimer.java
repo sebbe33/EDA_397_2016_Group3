@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,6 +84,7 @@ public class FragmentTimer extends Fragment {
         Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.putExtra(MainActivity.INTENT_EXTRA_FRAGMENT_NAME, FragmentTimer.class.getSimpleName());
         mNotifyMgr = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        final boolean showNotification = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("checkBoxTimer", true);
         final NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(getActivity().getApplicationContext())
                         .setSmallIcon(R.mipmap.ic_launcher_2)
@@ -103,11 +105,11 @@ public class FragmentTimer extends Fragment {
                 millisLeft = (long) (1000 * Math.rint(millisLeft / 1000d));
                 String time = formatTime(timerFormat, millisLeft);
                 tv_timer.setText(time);
-                if (millisLeft == 0) {
-                    timer.stop();
+
 
                 notificationBuilder.setContentText(time);
-                mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
+                if(showNotification)
+                    mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
                 // If the current time over the time user set.
                 if (millisLeft == 0) {
                     timer.stop();
@@ -115,7 +117,8 @@ public class FragmentTimer extends Fragment {
                     notificationBuilder.setContentText("Time is up!");
                     notificationBuilder.setSound(Uri.parse("android.resource://"
                             + getActivity().getApplicationContext().getPackageName() + "/" + R.raw.cat));
-                    mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
+                    if(showNotification)
+                        mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
                     notificationBuilder.setSound(null);
                     btnStart.setText("Start");
                     showDialog("Time is up!");
@@ -125,7 +128,7 @@ public class FragmentTimer extends Fragment {
                     btnRest.setEnabled(true);
                 }
             }
-        }});
+        });
 
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,7 +154,8 @@ public class FragmentTimer extends Fragment {
                         tv_timer.setText(time);
                         // Notification
                         notificationBuilder.setContentText(time);
-                        mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
+                        if(showNotification)
+                            mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
 
                         SpinnerHour.setEnabled(false);
                         SpinnerMinute.setEnabled(false);
@@ -166,7 +170,8 @@ public class FragmentTimer extends Fragment {
                     btnRest.setEnabled(true);
                     // Notification
                     notificationBuilder.setContentText("Paused");
-                    mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
+                    if(showNotification)
+                        mNotifyMgr.notify(R.integer.notification_timer, notificationBuilder.build());
                 } else {
                     //resume the timer
                     timer.resume();
@@ -189,7 +194,8 @@ public class FragmentTimer extends Fragment {
                // mNotifyMgr.cancel(R.integer.notification_timer);
 
 
-                mNotifyMgr.cancel(R.integer.notification_timer);
+                if(showNotification)
+                    mNotifyMgr.cancel(R.integer.notification_timer);
 
                 SpinnerHour.setEnabled(true);
                 SpinnerHour.setSelection(0);
