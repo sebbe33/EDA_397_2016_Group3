@@ -1,6 +1,5 @@
 package chalmers.eda397_2016_group3.trello;
 
-import android.support.v7.internal.widget.AdapterViewCompat;
 import android.support.v7.widget.RecyclerView;
 
 import android.view.LayoutInflater;
