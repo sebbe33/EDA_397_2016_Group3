@@ -36,6 +36,8 @@ public class TrelloImplImproved implements TrelloImproved {
     private static final String METHOD_PUT      = "PUT";
     private static final String GZIP_ENCODING   = "gzip";
 
+    private static final String CHECKLIST_POST_URL = "https://api.trello.com/1/checklists";
+    private static final String CHECKLIST_CHECKITEM_POST_URL = "https://api.trello.com/1/checklists/{0}/checkItems";
     private String apiKey = null;
     private String token = null;
     private TrelloObjectFactoryImpl trelloObjFactory = new TrelloObjectFactoryImpl();
@@ -1143,6 +1145,35 @@ public class TrelloImplImproved implements TrelloImproved {
 
         trelloObjFactory.createObject(new TypeToken<Card>() {
         }, doPut(url, keyValueMap));
+    }
+
+    public Checklist createChecklistInCard(String cardId, String name) {
+        Map<String, String> keyValueMap = new HashMap<String, String>();
+        Log.d("debug", "creating check list in card");
+        final String url = TrelloURL
+                .create(apiKey, CHECKLIST_POST_URL)
+                .token(token)
+                .build();
+        keyValueMap.put("name", name);
+        keyValueMap.put("idCard", cardId);
+        return trelloObjFactory.createObject(new TypeToken<Checklist>() {
+        }, doPost(url, keyValueMap));
+    }
+
+    public CheckItem addCheckItemToCheckList(String checklistId, String name, int position, boolean isChecked) {
+        Map<String, String> keyValueMap = new HashMap<String, String>();
+        Log.d("debug", "creating item");
+        final String url = TrelloURL
+                .create(apiKey, CHECKLIST_CHECKITEM_POST_URL, checklistId)
+                .token(token)
+                .build();
+
+        keyValueMap.put("name", name);
+        keyValueMap.put("position", position + "");
+        keyValueMap.put("checked", isChecked+"");
+
+        return trelloObjFactory.createObject(new TypeToken<CheckItem>() {
+        }, doPost(url, keyValueMap));
     }
 
     private InputStream doGet(String url) {

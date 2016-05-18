@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by sebastianblomberg on 2016-05-09.
  */
-public class CardChaneUtils {
+public class CardChangeUtils {
     public enum CardAttribute {
         BOARD_ID,
         LIST_ID,

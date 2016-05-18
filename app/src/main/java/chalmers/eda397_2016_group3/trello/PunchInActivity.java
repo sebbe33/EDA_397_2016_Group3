@@ -20,11 +20,14 @@ import com.bumptech.glide.Glide;
 
 import org.trello4j.Trello;
 import org.trello4j.model.Card;
+import org.trello4j.model.Checklist;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import chalmers.eda397_2016_group3.R;
 
@@ -63,10 +66,11 @@ public class PunchInActivity  extends AppCompatActivity {
 
         // Initialize trello service
         TrelloApp trelloApp = TrelloAppService.getTrelloApp(this);
-        Trello trelloAPI = TrelloAppService.getTrelloAPIInterface(trelloApp);
+        TrelloImproved trelloAPI = TrelloAppService.getTrelloAPIInterface(trelloApp);
 
-        // Start new task to retrieve card
+        // Start new task to retrieve card and checklist
         new FetchCard(trelloAPI).execute(cardID);
+        new FetchChecklist(trelloAPI).execute(cardID);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -163,6 +167,53 @@ public class PunchInActivity  extends AppCompatActivity {
             PunchInActivity.this.activeCard = result;
             PunchInActivity.this.cardDescriptor = new CardDescriptorImpl(result);
             updateView();
+        }
+    }
+
+    private class FetchChecklist extends AsyncTask<String, Integer, Checklist> {
+        private final TrelloImproved trelloAPI;
+        private String cardId;
+        public FetchChecklist(TrelloImproved trelloAPI) {
+            this.trelloAPI = trelloAPI;
+        }
+
+        @Override
+        protected Checklist doInBackground(String... params) {
+            String cardId = params[0];
+            List<Checklist> checklists = trelloAPI.getChecklistByCard(cardId);
+
+            Checklist definitionOfDoneChecklist = null;
+
+            for(Checklist c : checklists) {
+                if(c.getName().equals("Definition of done")) {
+                    definitionOfDoneChecklist = c;
+                    break;
+                }
+            }
+
+            if(definitionOfDoneChecklist == null) {
+                // Create a new checklist
+                Checklist dodChecklist = trelloAPI.createChecklistInCard(cardId, "Definition of done");
+                List<String> dodItems = new ArrayList<>();
+                dodItems.add("Item 1");
+                dodItems.add("Item 2");
+
+                int i = 0;
+                for(String name : dodItems) {
+                    trelloAPI.addCheckItemToCheckList(dodChecklist.getId(), name, i, false);
+                }
+
+                definitionOfDoneChecklist = trelloAPI.getChecklist(dodChecklist.getId());
+            }
+
+
+
+            return definitionOfDoneChecklist;
+        }
+
+        @Override
+        protected void onPostExecute(Checklist result) {
+            Log.d("debug", "checklist : " + result.getName());
         }
     }
 

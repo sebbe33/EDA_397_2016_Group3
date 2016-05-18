@@ -93,8 +93,8 @@ public class CardChangeNotifierService extends IntentService implements CardChan
             return;
         }
 
-        List<CardChaneUtils.CardAttribute> changedAttributes = CardChaneUtils.getCardChange(oldCard, newCard);
-        if(!changedAttributes.contains(CardChaneUtils.CardAttribute.LIST_ID)) {
+        List<CardChangeUtils.CardAttribute> changedAttributes = CardChangeUtils.getCardChange(oldCard, newCard);
+        if(!changedAttributes.contains(CardChangeUtils.CardAttribute.LIST_ID)) {
             Log.d("debug", "Card change ignored. Does not contain a change of list id");
             return;
         }
