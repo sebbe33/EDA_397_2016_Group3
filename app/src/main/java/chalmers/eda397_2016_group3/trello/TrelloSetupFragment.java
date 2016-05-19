@@ -179,11 +179,11 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
             list.add(trello.getMember("me").getFullName());
             list.add(trello.getMember("me").getInitials());
 
-            if (trello.getMember("me").getAvatarHash().isEmpty())
-             list.add("noimage");
-            else
-                list.add(trello.getMember("me").getAvatarHash());
 
+                if (trello.getMember("me").getAvatarHash()==null||trello.getMember("me").getAvatarHash().isEmpty()){
+                    list.add("Noimage");}
+                else
+                    list.add(trello.getMember("me").getAvatarHash());
             return trello.getBoardsByMember("me");
         }
 
