@@ -1,40 +1,32 @@
 package chalmers.eda397_2016_group3;
 
 import android.app.AlertDialog;
-import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.NotificationCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.List;
-import java.util.Locale;
 
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import chalmers.eda397_2016_group3.trello.CardChangeNotifierService;
+import chalmers.eda397_2016_group3.trello.DefinitionOfDoneFragment;
 import chalmers.eda397_2016_group3.trello.TasksFragment;
 import chalmers.eda397_2016_group3.timer.FragmentTimer;
 import chalmers.eda397_2016_group3.timer.MyTimer;
@@ -167,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.navigation_github:
-                fragmentClass = DefinitionOfDone.class;
+                fragmentClass = DefinitionOfDoneFragment.class;
                 break;
 
             case R.id.navigation_trello_feature:

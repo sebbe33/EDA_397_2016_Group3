@@ -1,4 +1,4 @@
-package chalmers.eda397_2016_group3;
+package chalmers.eda397_2016_group3.trello;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -28,22 +28,22 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.List;
 
+import chalmers.eda397_2016_group3.FragmentGithub;
+import chalmers.eda397_2016_group3.R;
+
 import static android.widget.Toast.LENGTH_SHORT;
 
 /**
  * Created by N10 on 4/19/2016.
  */
-public class DefinitionOfDone extends Fragment {
-
-
-    ArrayList<String> list = new ArrayList<String>();
-    TextView tv;
+public class DefinitionOfDoneFragment extends Fragment {
+    private TextView tv;
 
     public  List<String> lDataSet=null;
-    EditText edit=null;
+    private EditText edit=null;
     /** Declaring an ArrayAdapter to set items to ListView */
 
-    MyBaseAdapter adapter;
+    private MyBaseAdapter adapter;
 
     private static final int TIME_TO_AUTOMATICALLY_DISMISS_ITEM = 1000;
 
@@ -77,9 +77,10 @@ public class DefinitionOfDone extends Fragment {
                     edit.setError("Cannot add empty item");
 
                 }
-                else
-                list.add(edit.getText().toString());
-                adapter.updateList(list);
+                else {
+                    DefinitionOfDoneService.addItem(edit.getText().toString(), getActivity());
+                }
+                adapter.updateList(DefinitionOfDoneService.getDodList(getActivity()));
                 adapter.notifyDataSetChanged();
             }
         });
@@ -92,7 +93,7 @@ public class DefinitionOfDone extends Fragment {
     private void init(RecyclerView recyclerView) {
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
-        adapter = new MyBaseAdapter(list);
+        adapter = new MyBaseAdapter(DefinitionOfDoneService.getDodList(getActivity()));
 
         recyclerView.setAdapter(adapter);
         final SwipeToDismissTouchListener<RecyclerViewAdapter> touchListener =
@@ -111,6 +112,8 @@ public class DefinitionOfDone extends Fragment {
 
                             @Override
                             public void onDismiss(RecyclerViewAdapter view, int position) {
+                                String item = DefinitionOfDoneService.getDodList(getActivity()).get(position);
+                                DefinitionOfDoneService.removeItem(item, getActivity());
                                 adapter.remove(position);
                             }
                         });

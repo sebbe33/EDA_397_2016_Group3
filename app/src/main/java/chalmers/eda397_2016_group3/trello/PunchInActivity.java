@@ -13,7 +13,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -35,14 +37,13 @@ import chalmers.eda397_2016_group3.R;
  * Created by N10 on 4/26/2016.
  */
 public class PunchInActivity  extends AppCompatActivity {
-
-
     public static String color="#fffff";
-
-    int status;
-
+    private static final String DOD_LIST_NAME = "Definition Of Done";
+    private TrelloImproved trelloAPI;
     private Card activeCard;
     private CardDescriptor cardDescriptor = null;
+
+    private ChecklistImproved checkList = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,15 +67,13 @@ public class PunchInActivity  extends AppCompatActivity {
 
         // Initialize trello service
         TrelloApp trelloApp = TrelloAppService.getTrelloApp(this);
-        TrelloImproved trelloAPI = TrelloAppService.getTrelloAPIInterface(trelloApp);
+        trelloAPI = TrelloAppService.getTrelloAPIInterface(trelloApp);
 
         // Start new task to retrieve card and checklist
         new FetchCard(trelloAPI).execute(cardID);
         new FetchChecklist(trelloAPI).execute(cardID);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        status=0;
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -147,6 +146,47 @@ public class PunchInActivity  extends AppCompatActivity {
         }
 
         fab.setOnClickListener(onTimeRecordingToggleListener);
+
+        if(checkList != null) {
+            LinearLayout checklistLayout = (LinearLayout) findViewById(R.id.checklist_layout);
+            checklistLayout.removeAllViews();
+            for(final ChecklistImproved.CheckItem item : checkList.getCheckItems()) {
+                Log.d("debug", "Adding checkitem " + item.getName());
+                final CheckBox currentItemCheckbox = new CheckBox(this);
+                currentItemCheckbox.setText(item.getName());
+                currentItemCheckbox.setChecked(item.getState().equals("complete"));
+                Log.d("debug", item.getState());
+                currentItemCheckbox.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        new UpdateCheckItem(trelloAPI, item)
+                                .execute(currentItemCheckbox.isChecked()? "complete" : "incomplete");
+                    }
+                });
+                checklistLayout.addView(currentItemCheckbox);
+            }
+        }
+    }
+
+    private class UpdateCheckItem extends AsyncTask<String, Integer, ChecklistImproved.CheckItem> {
+        private final TrelloImproved trelloAPI;
+        private ChecklistImproved.CheckItem checkItem;
+        public UpdateCheckItem(TrelloImproved trelloAPI, ChecklistImproved.CheckItem checkItem) {
+            this.trelloAPI = trelloAPI;
+            this.checkItem = checkItem;
+        }
+
+        @Override
+        protected ChecklistImproved.CheckItem doInBackground(String... params) {
+            this.checkItem.setState(params[0] == "complete"? "complete" : "incomplete");
+            trelloAPI.updateCheckItemByCard(activeCard, checkList, checkItem);
+            return checkItem;
+        }
+
+        @Override
+        protected void onPostExecute(ChecklistImproved.CheckItem result) {
+            updateView();
+        }
     }
 
     private class FetchCard extends AsyncTask<String, Integer, Card> {
@@ -170,7 +210,7 @@ public class PunchInActivity  extends AppCompatActivity {
         }
     }
 
-    private class FetchChecklist extends AsyncTask<String, Integer, Checklist> {
+    private class FetchChecklist extends AsyncTask<String, Integer, ChecklistImproved> {
         private final TrelloImproved trelloAPI;
         private String cardId;
         public FetchChecklist(TrelloImproved trelloAPI) {
@@ -178,14 +218,14 @@ public class PunchInActivity  extends AppCompatActivity {
         }
 
         @Override
-        protected Checklist doInBackground(String... params) {
+        protected ChecklistImproved doInBackground(String... params) {
             String cardId = params[0];
-            List<Checklist> checklists = trelloAPI.getChecklistByCard(cardId);
+            List<ChecklistImproved> checklists = trelloAPI.getChecklistImprovedByCard(cardId);
 
-            Checklist definitionOfDoneChecklist = null;
+            ChecklistImproved definitionOfDoneChecklist = null;
 
-            for(Checklist c : checklists) {
-                if(c.getName().equals("Definition of done")) {
+            for(ChecklistImproved c : checklists) {
+                if(c.getName().equals(DOD_LIST_NAME)) {
                     definitionOfDoneChecklist = c;
                     break;
                 }
@@ -193,17 +233,14 @@ public class PunchInActivity  extends AppCompatActivity {
 
             if(definitionOfDoneChecklist == null) {
                 // Create a new checklist
-                Checklist dodChecklist = trelloAPI.createChecklistInCard(cardId, "Definition of done");
-                List<String> dodItems = new ArrayList<>();
-                dodItems.add("Item 1");
-                dodItems.add("Item 2");
+                Checklist dodChecklist = trelloAPI.createChecklistInCard(cardId, DOD_LIST_NAME);
 
                 int i = 0;
-                for(String name : dodItems) {
+                for(String name : DefinitionOfDoneService.getDodList(PunchInActivity.this)) {
                     trelloAPI.addCheckItemToCheckList(dodChecklist.getId(), name, i, false);
                 }
 
-                definitionOfDoneChecklist = trelloAPI.getChecklist(dodChecklist.getId());
+                definitionOfDoneChecklist = trelloAPI.getChecklistImproved(dodChecklist.getId());
             }
 
 
@@ -212,8 +249,10 @@ public class PunchInActivity  extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(Checklist result) {
+        protected void onPostExecute(ChecklistImproved result) {
             Log.d("debug", "checklist : " + result.getName());
+            checkList = result;
+            updateView();
         }
     }
 
