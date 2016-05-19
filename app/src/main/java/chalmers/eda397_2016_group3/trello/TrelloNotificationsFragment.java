@@ -60,12 +60,6 @@ public class TrelloNotificationsFragment extends Fragment implements CardChangeP
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CardChangeNotifierService.registerCardChangeListener(this);
-
-
-        // READ!!!!!!! Use CardChangeNotifierService.getCardChanges(); to get a list of all card changes
-        // Use CardChangeNotifierService.clear(); to clear all changes
-        // Use  CardChangeNotifierService.removeCardChange(cardchange); to remove on change
-
     }
 
     @Override
@@ -117,8 +111,8 @@ public class TrelloNotificationsFragment extends Fragment implements CardChangeP
             return;
         }
 
-        List<CardChaneUtils.CardAttribute> changedAttributes = CardChaneUtils.getCardChange(oldCard, newCard);
-        if (!changedAttributes.contains(CardChaneUtils.CardAttribute.LIST_ID)) {
+        List<CardChangeUtils.CardAttribute> changedAttributes = CardChangeUtils.getCardChange(oldCard, newCard);
+        if (!changedAttributes.contains(CardChangeUtils.CardAttribute.LIST_ID)) {
             Log.d("debug", "Card change ignored. Does not contain a change of list id");
             return;
         }

@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.eazegraph.lib.charts.PieChart;
 import org.eazegraph.lib.models.PieModel;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import chalmers.eda397_2016_group3.MainActivity;
 import chalmers.eda397_2016_group3.R;
 import chalmers.eda397_2016_group3.utils.AdapterTuple;
 
@@ -32,8 +34,11 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
     private TrelloApp trelloApp = null;
     private Trello trelloAPI = null;
     private List<AdapterTuple<String,String>> spinnerOptions = null;
+    public String uname;
     PieChart mPieChart ;
     private TextView statisticsTxt;
+    private MainActivity mainActivity;
+    List<String> list;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +49,7 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trello_setup, container, false);
+
 
 
         return view;
@@ -57,11 +63,15 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
 
         Button loginButton = (Button) getView().findViewById(R.id.trello_login_button);
         mPieChart = (PieChart) getView().findViewById(R.id.piechart);
+        mainActivity= (MainActivity) getActivity();
 
         if(trelloApp.isAuthenticated()) {
             getBoardsHelper();
+
         } else {
+
             loginButton.setText(getResources().getString(R.string.TRELLO_LOGIN_BUTTON_NOT_AUTHENTICATED));
+            mainActivity.removeUser();
         }
         // Add self as listener to the login button
         loginButton.setOnClickListener(new LoginButtonListener());
@@ -76,6 +86,9 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
         if (requestCode == TrelloLoginActivity.LOGIN_REQUEST_CODE) {
             if(resultCode == TrelloLoginActivity.LOGIN_SUCCEEDED){
                 getBoardsHelper();
+
+
+
             } else if (resultCode == TrelloLoginActivity.LOGIN_FAILED) {
 
             }
@@ -86,9 +99,6 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
         trelloAPI = TrelloAppService.getTrelloAPIInterface(trelloApp);
         // Get boards
         new FetchBoards().execute(trelloAPI);
-
-
-
         Button loginButton = (Button) getView().findViewById(R.id.trello_login_button);
         loginButton.setText(getResources().getString(R.string.TRELLO_LOGIN_BUTTON_AUTHENTICATED));
     }
@@ -145,10 +155,13 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
             if(trelloApp.isAuthenticated()) {
                 TrelloAppService.setAuthenticationToken("", getActivity());
                 // Toggle button and and disable selected board
+
                 Button loginButton = (Button) getView().findViewById(R.id.trello_login_button);
                 loginButton.setText(getResources().getString(R.string.TRELLO_LOGIN_BUTTON_NOT_AUTHENTICATED));
+                mainActivity.removeUser();
                 // TODO : Disable selected board
             } else {
+
                 Intent trelloLoginIntent = new Intent(getActivity(), TrelloLoginActivity.class);
                 startActivityForResult(trelloLoginIntent, TrelloLoginActivity.LOGIN_REQUEST_CODE);
             }
@@ -157,9 +170,20 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
 
     private class FetchBoards extends AsyncTask<Trello, Integer, List<Board>> {
 
+
+
         @Override
         protected List<Board> doInBackground(Trello... params) {
             Trello trello = params[0];
+            list=new ArrayList<>();
+            list.add(trello.getMember("me").getFullName());
+            list.add(trello.getMember("me").getInitials());
+
+            if (trello.getMember("me").getAvatarHash().isEmpty())
+             list.add("noimage");
+            else
+                list.add(trello.getMember("me").getAvatarHash());
+
             return trello.getBoardsByMember("me");
         }
 
@@ -168,6 +192,7 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
             spinnerOptions = new ArrayList<>(result.size());
             Integer selectedIndex = null;
             int i = 0;
+            mainActivity.addUserDetails(list);
             for(Board b : result) {
                 Log.d("debug", "Retreived Board " + b.getName());
                 spinnerOptions.add(new AdapterTuple<String, String>(b.getId(), b.getName()));

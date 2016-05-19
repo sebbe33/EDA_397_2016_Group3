@@ -17,15 +17,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/sub_card"
-                android:layout_width="@dimen/list_item_sub_text_width"
-                android:layout_height="@dimen/list_item_sub_text_height"
-                android:background="#EC7703"
-                android:layout_marginRight="16dp"/>
-
             <LinearLayout
-                android:layout_below="@+id/sub_card"
                 android:layout_marginTop="10dp"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

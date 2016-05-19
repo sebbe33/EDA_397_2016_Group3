@@ -171,4 +171,8 @@
     <string name="recycler_view">Recycler View</string>
     <string name="deleted">Deleted</string>
     <string name="undo">UNDO</string>
+    <string name="hintTxtItem">Enter done item here ...</string>
+    <string name="lblBtnAdd">Add</string>
+    <string name="txtEmpty">Checklist is empty</string>
+
 </resources>

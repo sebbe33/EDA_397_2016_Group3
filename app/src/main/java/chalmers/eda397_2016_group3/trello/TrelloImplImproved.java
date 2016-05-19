@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.google.gson.reflect.TypeToken;
 
-import org.trello4j.Trello;
 import org.trello4j.TrelloException;
 import org.trello4j.TrelloObjectFactoryImpl;
 import org.trello4j.TrelloURL;
@@ -36,6 +35,9 @@ public class TrelloImplImproved implements TrelloImproved {
     private static final String METHOD_PUT      = "PUT";
     private static final String GZIP_ENCODING   = "gzip";
 
+    private static final String CHECKLIST_POST_URL = "https://api.trello.com/1/checklists";
+    private static final String CHECKLIST_CHECKITEM_POST_URL = "https://api.trello.com/1/checklists/{0}/checkItems";
+    private static final String CARD_CHECKLIST_CHECKITEM_PUT_URL = "https://api.trello.com/1/cards/{0}/checklist/{1}/checkItem/{2}";
     private String apiKey = null;
     private String token = null;
     private TrelloObjectFactoryImpl trelloObjFactory = new TrelloObjectFactoryImpl();
@@ -441,6 +443,19 @@ public class TrelloImplImproved implements TrelloImproved {
                 .build();
 
         return trelloObjFactory.createObject(new TypeToken<List<Checklist>>() {
+        }, doGet(url));
+    }
+
+    @Override
+    public List<ChecklistImproved> getChecklistImprovedByCard(final String cardId) {
+        validateObjectId(cardId);
+
+        final String url = TrelloURL
+                .create(apiKey, TrelloURL.CARD_CHECKLISTS_URL, cardId)
+                .token(token)
+                .build();
+
+        return trelloObjFactory.createObject(new TypeToken<List<ChecklistImproved>>() {
         }, doGet(url));
     }
 
@@ -1145,6 +1160,66 @@ public class TrelloImplImproved implements TrelloImproved {
         }, doPut(url, keyValueMap));
     }
 
+    @Override
+    public Checklist createChecklistInCard(String cardId, String name) {
+        Map<String, String> keyValueMap = new HashMap<String, String>();
+        Log.d("debug", "creating check list in card");
+        final String url = TrelloURL
+                .create(apiKey, CHECKLIST_POST_URL)
+                .token(token)
+                .build();
+        keyValueMap.put("name", name);
+        keyValueMap.put("idCard", cardId);
+        return trelloObjFactory.createObject(new TypeToken<Checklist>() {
+        }, doPost(url, keyValueMap));
+    }
+
+    @Override
+    public CheckItem addCheckItemToCheckList(String checklistId, String name, int position, boolean isChecked) {
+        Map<String, String> keyValueMap = new HashMap<String, String>();
+        Log.d("debug", "creating item");
+        final String url = TrelloURL
+                .create(apiKey, CHECKLIST_CHECKITEM_POST_URL, checklistId)
+                .token(token)
+                .build();
+
+        keyValueMap.put("name", name);
+        keyValueMap.put("position", position + "");
+        keyValueMap.put("checked", isChecked+"");
+
+        return trelloObjFactory.createObject(new TypeToken<CheckItem>() {
+        }, doPost(url, keyValueMap));
+    }
+
+    @Override
+    public void updateCheckItemByCard(Card card, ChecklistImproved checklist, ChecklistImproved.CheckItem checkItem) {
+        Map<String, String> keyValueMap = new HashMap<String, String>();
+        final String url =
+                "https://api.trello.com/1/cards/"+card.getId()+"/checklist/"+checklist.getId()+"/checkItem/"+checkItem.getId()
+                        +"?key="+apiKey+"&token="+token;
+
+
+        keyValueMap.put("name", checkItem.getName());
+        keyValueMap.put("state", checkItem.getState());
+
+        trelloObjFactory.createObject(new TypeToken<ChecklistImproved.CheckItem>() {
+        }, doPut(url, keyValueMap));
+    }
+
+    @Override
+    public ChecklistImproved getChecklistImproved(String checklistId, final String... filter) {
+        validateObjectId(checklistId);
+
+        final String url = TrelloURL
+                .create(apiKey, TrelloURL.CHECKLIST_URL, checklistId)
+                .token(token)
+                .filter(filter)
+                .build();
+
+        return trelloObjFactory.createObject(new TypeToken<ChecklistImproved>() {
+        }, doGet(url));
+    }
+
     private InputStream doGet(String url) {
         return doRequest(url, METHOD_GET);
     }
@@ -1193,7 +1268,7 @@ public class TrelloImplImproved implements TrelloImproved {
             }
 
             if (conn.getResponseCode() > 399) {
-                Log.e("trello", "Error on request. Code: " + conn.getResponseCode());
+                Log.e("debug", "Error on request. Code: " + conn.getResponseCode());
                 return null;
             } else {
                 return getWrappedInputStream(

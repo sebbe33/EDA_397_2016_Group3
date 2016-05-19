@@ -1,39 +1,42 @@
 package chalmers.eda397_2016_group3;
 
 import android.app.AlertDialog;
-import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import java.util.Locale;
+import java.util.List;
 
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import chalmers.eda397_2016_group3.trello.CardChangeNotifierService;
+import chalmers.eda397_2016_group3.trello.DefinitionOfDoneFragment;
 import chalmers.eda397_2016_group3.trello.TasksFragment;
 import chalmers.eda397_2016_group3.timer.FragmentTimer;
 import chalmers.eda397_2016_group3.timer.MyTimer;
 import chalmers.eda397_2016_group3.trello.TrelloNotificationsFragment;
 import chalmers.eda397_2016_group3.trello.TrelloSetupFragment;
 import chalmers.eda397_2016_group3.utils.SettingsFragment;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -53,6 +56,12 @@ public class MainActivity extends AppCompatActivity {
 
     private MyTimer timer = new MyTimer(new Handler());
 
+    private NavigationView navigationView;
+    private View header;
+    private TextView initials,userName;
+    private final String imageURL="https://kontak.me/slpw/plugin_blab/noprofileimage.png";
+    private String url;
+    private CircleImageView profileImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
-        //NAVIGATION
+        //NAVIGATIONf
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar1);
         setSupportActionBar(toolbar);
 
@@ -72,11 +81,19 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         actionBar.setDisplayHomeAsUpEnabled(true);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+
         if (navigationView != null) {
             setupDrawerContent(navigationView);
         }
 
+        header=navigationView.inflateHeaderView(R.layout.drawer_header);
+        initials= (TextView) header.findViewById(R.id.initialsText);
+        userName= (TextView) header.findViewById(R.id.userName);
+        profileImage = (CircleImageView) header.findViewById(R.id.profile_image);
+        //profileImage =  findViewById(R.id.profile_image);
+        Log.d("debug", "Profile Image: " + profileImage + "");
+        //removeUser();
         navigationView.getMenu().performIdentifierAction(
                 getIntent().getIntExtra("StartFragment", R.id.navigation_trello), 0);
 
@@ -90,6 +107,31 @@ public class MainActivity extends AppCompatActivity {
         else
             navigationView.getMenu().performIdentifierAction(R.id.navigation_trello, 0);
 
+    }
+
+    public void addUserDetails(List<String> userDetails){
+        userName.setText(userDetails.get(0));
+        if(userDetails.get(2).equals("noimage")){
+            initials.setText(userDetails.get(1));
+            loadBackdrop(imageURL);
+        }
+        else
+        {
+            url="https://trello-avatars.s3.amazonaws.com/"+userDetails.get(2)+"/170.png";
+            initials.setText("");
+            loadBackdrop(url);
+        }
+    }
+
+
+    public void removeUser(){
+        userName.setText("UserName");
+        initials.setText("");
+        loadBackdrop(imageURL);
+    }
+
+    private void loadBackdrop(String url) {
+        Glide.with(this).load(url).into(profileImage);
     }
 
     @Override
@@ -124,10 +166,10 @@ public class MainActivity extends AppCompatActivity {
                 fragmentClass = TrelloSetupFragment.class;
                 break;
 
-  /*          case R.id.navigation_github:
-                fragmentClass = FragmentGithub.class;
+            case R.id.navigation_github:
+                fragmentClass = DefinitionOfDoneFragment.class;
                 break;
-*/
+
             case R.id.navigation_trello_feature:
                 fragmentClass = TasksFragment.class;
                 break;
