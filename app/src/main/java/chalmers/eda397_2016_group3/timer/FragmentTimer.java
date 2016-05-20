@@ -85,6 +85,7 @@ public class FragmentTimer extends Fragment {
         intent.putExtra(MainActivity.INTENT_EXTRA_FRAGMENT_NAME, FragmentTimer.class.getSimpleName());
         mNotifyMgr = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
         final boolean showNotification = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("checkBoxTimer", true);
+
         final NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(getActivity().getApplicationContext())
                         .setSmallIcon(R.mipmap.ic_launcher_2)
@@ -105,6 +106,8 @@ public class FragmentTimer extends Fragment {
                 millisLeft = (long) (1000 * Math.rint(millisLeft / 1000d));
                 String time = formatTime(timerFormat, millisLeft);
                 tv_timer.setText(time);
+
+
 
 
                 notificationBuilder.setContentText(time);

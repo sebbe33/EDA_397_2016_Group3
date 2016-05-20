@@ -6,8 +6,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
 import org.trello4j.model.Card;
@@ -17,6 +19,7 @@ import java.util.List;
 
 import chalmers.eda397_2016_group3.MainActivity;
 import chalmers.eda397_2016_group3.R;
+import chalmers.eda397_2016_group3.timer.FragmentTimer;
 
 public class CardChangeNotifierService extends IntentService implements CardChangePoller.CardChangeListener {
     private static List<CardChange> cardChanges = new ArrayList<>();
@@ -48,6 +51,8 @@ public class CardChangeNotifierService extends IntentService implements CardChan
     public static void removeCardChange(CardChange c) {
         cardChanges.remove(c);
     }
+
+    private NotificationManager mNotifyMgr;
 
     @Override
     public void onCreate() {
@@ -99,10 +104,19 @@ public class CardChangeNotifierService extends IntentService implements CardChan
             return;
         }
 
+        final boolean showNotification = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("checkBoxTrello", true);
+
+        if(!showNotification)
+            return;
+
         // Stack the card change
         cardChanges.add(new CardChange(oldCard, newCard));
 
         String description = newCard.getName() + " moved to another list";
+
+
+
+
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
@@ -127,8 +141,10 @@ public class CardChangeNotifierService extends IntentService implements CardChan
                         0,
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
-        mBuilder.setContentIntent(resultPendingIntent);
 
+
+
+        mBuilder.setContentIntent(resultPendingIntent);
         mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS);
         mBuilder.setAutoCancel(true);
 
@@ -136,8 +152,11 @@ public class CardChangeNotifierService extends IntentService implements CardChan
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
+
         mNotificationManager.notify(1, mBuilder.build());
     }
+
+
 
     public static class CardChange {
         private Card oldCard,newCard;
