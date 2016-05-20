@@ -109,18 +109,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void addUserDetails(List<String> userDetails){
-        userName.setText(userDetails.get(0));
-        if(userDetails.get(2).equals("noimage")){
+    public void addUserDetails(List<String> userDetails) {
+
+        if(userDetails.size()>0)
+        {
+        if (userDetails.get(2).equals("noimage")) {
             initials.setText(userDetails.get(1));
             loadBackdrop(imageURL);
-        }
-        else
-        {
-            url="https://trello-avatars.s3.amazonaws.com/"+userDetails.get(2)+"/170.png";
+        } else {
+            userName.setText(userDetails.get(0));
+            url = "https://trello-avatars.s3.amazonaws.com/" + userDetails.get(2) + "/170.png";
             initials.setText("");
             loadBackdrop(url);
         }
+    }
     }
 
 
