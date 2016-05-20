@@ -39,6 +39,7 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
     private TextView statisticsTxt;
     private MainActivity mainActivity;
     List<String> list;
+    private final String NO__PROFILE_IMAGE="noimage";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -179,11 +180,13 @@ public class TrelloSetupFragment extends Fragment implements AdapterView.OnItemS
             list.add(trello.getMember("me").getFullName());
             list.add(trello.getMember("me").getInitials());
 
-
-                if (trello.getMember("me").getAvatarHash()==null||trello.getMember("me").getAvatarHash().isEmpty()){
-                    list.add("Noimage");}
-                else
+            if (trello.getMember("me").getAvatarHash()==null||trello.getMember("me").getAvatarHash().isEmpty())
+            {
+                    list.add("noimage");
+            }
+            else
                     list.add(trello.getMember("me").getAvatarHash());
+
             return trello.getBoardsByMember("me");
         }
 

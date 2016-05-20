@@ -42,7 +42,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity extends AppCompatActivity {
 
     public static final String INTENT_EXTRA_FRAGMENT_NAME = "fragmentName";
-
+    private final String NO__PROFILE_IMAGE="noimage";
     private DrawerLayout mDrawerLayout;
 
 
@@ -113,11 +113,14 @@ public class MainActivity extends AppCompatActivity {
 
         if(userDetails.size()>0)
         {
-        if (userDetails.get(2).equals("noimage")) {
+            userName.setText(userDetails.get(0));
+        if (userDetails.get(2).equals(NO__PROFILE_IMAGE)) {
             initials.setText(userDetails.get(1));
             loadBackdrop(imageURL);
+
         } else {
-            userName.setText(userDetails.get(0));
+
+
             url = "https://trello-avatars.s3.amazonaws.com/" + userDetails.get(2) + "/170.png";
             initials.setText("");
             loadBackdrop(url);
