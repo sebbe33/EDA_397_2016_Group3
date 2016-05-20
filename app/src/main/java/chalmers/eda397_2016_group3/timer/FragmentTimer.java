@@ -287,8 +287,13 @@ public class FragmentTimer extends Fragment {
                 pairs.addPair(result.get(j).getFullName());
             }
             String myName = result.get(result.size()-1).getFullName();
-            setPair(pairs.getRandomPair());
-            setMyName(myName);
+            try {
+                setPair(pairs.getRandomPair());
+            }catch(Exception e){
+                setPair(myName+":");
+
+            }
+                setMyName(myName);
         }
     }
 
